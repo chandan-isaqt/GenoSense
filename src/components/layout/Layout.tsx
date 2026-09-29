@@ -1,50 +1,36 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Outlet } from 'react-router-dom';
-import { Sidebar } from './Sidebar';
-import { Header } from './Header';
-import { DisclaimerBanner } from './DisclaimerBanner';
+import { TopNavbar } from './TopNavbar';
 import { ReportModal } from '../common/ReportModal';
-import { X } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
+import { SYNTHETIC_DISCLAIMER } from '../../data/demoData';
 
 export const Layout: React.FC = () => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-navy-950 text-slate-100 font-sans">
-      {/* Desktop Sidebar (persistent) */}
-      <aside className="hidden lg:block h-full flex-shrink-0 z-30">
-        <Sidebar />
-      </aside>
+    <div className="min-h-screen bg-[#05080D] text-[#F4F7FA] lab-grid-bg flex flex-col font-sans selection:bg-[#35D6C7]/20 selection:text-[#35D6C7]">
+      {/* Premium Top Navigation */}
+      <TopNavbar />
 
-      {/* Mobile Drawer */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden flex">
-          <div
-            className="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity"
-            onClick={() => setMobileMenuOpen(false)}
-          />
-          <div className="relative w-72 max-w-[80vw] h-full z-10 flex flex-col shadow-2xl">
-            <button
-              onClick={() => setMobileMenuOpen(false)}
-              className="absolute top-4 right-4 z-20 p-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white"
-            >
-              <X className="w-5 h-5" />
-            </button>
-            <Sidebar onCloseMobile={() => setMobileMenuOpen(false)} />
+      {/* Main Content Viewport */}
+      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+        <Outlet />
+      </main>
+
+      {/* Subtle Footer Medical / Scientific Disclaimer */}
+      <footer className="w-full border-t border-[#182532] bg-[#05080D]/90 py-5 text-center text-xs text-[#8B9AAA]">
+        <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3 font-mono">
+          <div className="flex items-center gap-2 text-left">
+            <AlertCircle className="w-3.5 h-3.5 text-[#F5B942] flex-shrink-0" />
+            <p className="text-[11px] leading-relaxed text-[#8B9AAA]">
+              <strong className="text-[#F5B942] font-semibold uppercase mr-1">Scientific Notice:</strong>
+              {SYNTHETIC_DISCLAIMER}
+            </p>
+          </div>
+          <div className="text-[10px] text-[#8B9AAA]/60 flex-shrink-0">
+            GENOSENSE PROTOTYPE v1.2 • GRCh38
           </div>
         </div>
-      )}
-
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden relative">
-        <Header onOpenMobileMenu={() => setMobileMenuOpen(true)} />
-
-        <main className="flex-1 overflow-y-auto pb-16 sm:pb-14 px-4 sm:px-8 py-6 max-w-7xl w-full mx-auto">
-          <Outlet />
-        </main>
-
-        <DisclaimerBanner />
-      </div>
+      </footer>
 
       {/* Global Analysis Report Modal */}
       <ReportModal />

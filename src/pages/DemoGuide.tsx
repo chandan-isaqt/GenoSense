@@ -39,21 +39,21 @@ export const DemoGuide: React.FC = () => {
     {
       num: '01',
       title: 'Run 1-Click Pipeline',
-      desc: 'Click "Run Full GenoSense Demo" on the Overview page or Header to automate all 9 execution steps.',
-      action: 'Click Run Full Demo',
+      desc: 'Click "LIVE DEMO" on the top navigation to trigger all 9 automated stages.',
+      action: 'Run Live Demo',
     },
     {
       num: '02',
       title: 'Inspect Genomic Markers',
-      desc: 'Navigate to "Genomic Analysis" to view how 18 VCF variants are encoded into 24 numerical features.',
+      desc: 'Navigate to "Genomic Analysis" to evaluate how 18 VCF variants are encoded into 24 numerical dosage features.',
       action: 'View Genomic Analysis',
       link: '/genomic-analysis',
     },
     {
       num: '03',
       title: 'Evaluate Random Forest',
-      desc: 'Check "AI Prediction" for the 200-tree ensemble output (73% prototype score, HIGH risk classification).',
-      action: 'View AI Prediction',
+      desc: 'Check "AI Model" for 200-tree bagging ensemble output (73% prototype score, HIGH risk classification).',
+      action: 'View AI Model',
       link: '/ai-prediction',
     },
     {
@@ -66,31 +66,32 @@ export const DemoGuide: React.FC = () => {
     {
       num: '05',
       title: 'Test Raspberry Pi Edge OLED',
-      desc: 'Head to "Hardware" and press the tactile 3D red button to see the OLED screen update live over I2C.',
+      desc: 'Head to "Hardware" and press the tactile button to see the SSD1306 monochrome OLED screen update live over I2C.',
       action: 'View Hardware',
       link: '/hardware',
     },
     {
       num: '06',
       title: 'Export Dossier Report',
-      desc: 'Click "View Report" in the top bar to inspect or print the comprehensive research prototype report.',
-      action: 'Open Report Modal',
+      desc: 'Click "REPORT" in the top bar to inspect or print the comprehensive research prototype report.',
+      action: 'Open Report Dossier',
     },
   ];
 
   return (
     <div className="space-y-8 animate-fadeIn">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+      {/* Title */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#182532] pb-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-400">
-              <BookOpen className="w-5 h-5" />
+            <span className="p-1.5 rounded-[2px] bg-[#05080D] border border-[#182532] text-[#35D6C7]">
+              <BookOpen className="w-4 h-4" />
             </span>
-            <h1 className="text-2xl font-bold font-mono text-white tracking-wide">
+            <h1 className="text-2xl font-display font-bold text-[#F4F7FA] tracking-wide">
               EVALUATOR &amp; DEMO GUIDE
             </h1>
           </div>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1 font-mono">
+          <p className="text-xs sm:text-sm text-[#8B9AAA] mt-1 font-mono">
             30-second evaluation path, interactive test harness, and sample VCF data
           </p>
         </div>
@@ -99,14 +100,14 @@ export const DemoGuide: React.FC = () => {
           <button
             onClick={runFullDemo}
             disabled={isRunningFullDemo}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-mono font-semibold bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white shadow-[0_0_15px_rgba(6,182,212,0.3)] transition-all"
+            className="btn-lab-primary text-xs flex items-center gap-1.5"
           >
             <Play className="w-3.5 h-3.5 fill-current" />
-            <span>Run Full Demo</span>
+            <span>RUN LIVE DEMO</span>
           </button>
           <button
             onClick={resetDemo}
-            className="p-2 rounded-xl text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors"
+            className="p-2 rounded-[2px] text-[#8B9AAA] hover:text-[#F4F7FA] bg-[#0B111A] border border-[#182532] transition-colors"
             title="Reset Global Demo"
           >
             <RotateCcw className="w-4 h-4" />
@@ -114,41 +115,43 @@ export const DemoGuide: React.FC = () => {
         </div>
       </div>
 
-      <div className="p-6 rounded-2xl bg-gradient-to-r from-cyan-950/60 via-navy-900 to-blue-950/40 border border-cyan-500/30 space-y-4">
-        <div className="flex items-center gap-2 text-cyan-300 font-mono text-sm font-bold">
-          <Sparkles className="w-5 h-5 text-cyan-400" />
+      {/* 30-Second Fast Track Banner */}
+      <div className="lab-card p-6 border-l-2 border-l-[#35D6C7] space-y-3">
+        <div className="flex items-center gap-2 text-[#35D6C7] font-mono text-xs font-bold uppercase tracking-wider">
+          <Sparkles className="w-4 h-4" />
           <span>30-SECOND FAST TRACK FOR JUDGES</span>
         </div>
-        <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-3xl">
+        <p className="text-xs sm:text-sm text-[#F4F7FA] leading-relaxed max-w-4xl">
           GenoSense unites <strong>Bioinformatics</strong> (VCF genomic parsing), <strong>Machine Learning</strong> (Random Forest 200-trees),{' '}
           <strong>Explainable AI</strong> (TreeSHAP feature attributions), and <strong>Edge IoT</strong> (Raspberry Pi 4 driving an I2C SSD1306 OLED display).
-          Everything you see on this dashboard is fully interactive and backed by deterministic synthetic genomic datasets.
+          Everything you see on this dashboard is fully interactive, reproducible, and backed by deterministic synthetic genomic datasets.
         </p>
       </div>
 
+      {/* Step-by-Step Evaluator Walkthrough */}
       <div className="space-y-4">
-        <h2 className="text-base font-bold font-mono text-white uppercase tracking-wider">
+        <h2 className="text-base font-display font-bold text-[#F4F7FA] uppercase tracking-wider">
           Guided Evaluation Walkthrough
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 font-mono text-xs">
           {quickSteps.map((step) => (
             <div
               key={step.num}
-              className="p-5 rounded-2xl bg-navy-950/80 border border-slate-800 glass-panel flex flex-col justify-between space-y-3"
+              className="lab-card p-5 flex flex-col justify-between space-y-3"
             >
               <div>
-                <span className="text-xs font-mono font-bold text-cyan-400 block mb-1">
-                  Step {step.num}
+                <span className="text-[10px] text-[#35D6C7] font-bold block mb-1">
+                  STEP {step.num}
                 </span>
-                <h3 className="text-sm font-bold font-mono text-white">{step.title}</h3>
-                <p className="text-xs text-slate-400 mt-2 leading-relaxed">{step.desc}</p>
+                <h3 className="text-sm font-display font-bold text-[#F4F7FA]">{step.title}</h3>
+                <p className="text-[11px] text-[#8B9AAA] font-sans mt-2 leading-relaxed">{step.desc}</p>
               </div>
 
               {step.link ? (
                 <button
                   onClick={() => navigate(step.link!)}
-                  className="inline-flex items-center gap-1.5 text-xs font-mono text-cyan-400 hover:text-cyan-300 pt-2"
+                  className="inline-flex items-center gap-1.5 text-xs text-[#35D6C7] hover:underline pt-2 font-mono"
                 >
                   <span>{step.action}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -156,7 +159,7 @@ export const DemoGuide: React.FC = () => {
               ) : step.title.includes('Report') ? (
                 <button
                   onClick={() => setReportModalOpen(true)}
-                  className="inline-flex items-center gap-1.5 text-xs font-mono text-cyan-400 hover:text-cyan-300 pt-2"
+                  className="inline-flex items-center gap-1.5 text-xs text-[#35D6C7] hover:underline pt-2 font-mono"
                 >
                   <span>{step.action}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -164,7 +167,7 @@ export const DemoGuide: React.FC = () => {
               ) : (
                 <button
                   onClick={runFullDemo}
-                  className="inline-flex items-center gap-1.5 text-xs font-mono text-cyan-400 hover:text-cyan-300 pt-2"
+                  className="inline-flex items-center gap-1.5 text-xs text-[#35D6C7] hover:underline pt-2 font-mono"
                 >
                   <span>{step.action}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -175,36 +178,37 @@ export const DemoGuide: React.FC = () => {
         </div>
       </div>
 
-      <div className="p-6 rounded-2xl bg-navy-950/80 border border-slate-800 space-y-4 glass-panel">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
+      {/* Synthetic VCF Sample File Viewer */}
+      <div className="lab-card p-6 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#182532] pb-3">
           <div className="flex items-center gap-2">
-            <FileCode2 className="w-4 h-4 text-cyan-400" />
-            <h3 className="text-sm font-bold font-mono text-white">
-              Synthetic Reference VCF File (sample_GS-DEMO-001.vcf)
+            <FileCode2 className="w-4 h-4 text-[#35D6C7]" />
+            <h3 className="text-xs font-mono font-bold text-[#F4F7FA] uppercase tracking-wider">
+              Synthetic Reference VCF (sample_GS-DEMO-001.vcf)
             </h3>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 font-mono text-xs">
             <button
               onClick={handleCopyVcf}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-mono bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
+              className="flex items-center gap-1 px-3 py-1.5 rounded-[2px] bg-[#05080D] hover:bg-[#182532] text-[#8B9AAA] hover:text-[#F4F7FA] border border-[#182532] transition-colors"
             >
-              {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-              <span>{copied ? 'Copied!' : 'Copy VCF'}</span>
+              {copied ? <Check className="w-3.5 h-3.5 text-[#35D6C7]" /> : <Copy className="w-3.5 h-3.5" />}
+              <span>{copied ? 'COPIED' : 'COPY'}</span>
             </button>
             <button
               onClick={handleDownloadVcf}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-mono bg-cyan-600/20 hover:bg-cyan-600/30 text-cyan-300 border border-cyan-500/30 transition-colors"
+              className="flex items-center gap-1 px-3 py-1.5 rounded-[2px] bg-[#35D6C7]/10 hover:bg-[#35D6C7]/20 text-[#35D6C7] border border-[#35D6C7]/40 transition-colors"
             >
               <Download className="w-3.5 h-3.5" />
-              <span>Download .vcf</span>
+              <span>DOWNLOAD .VCF</span>
             </button>
           </div>
         </div>
 
-        <pre className="p-4 rounded-xl bg-black/60 border border-slate-800 text-[11px] font-mono text-cyan-400/90 overflow-x-auto max-h-56 leading-relaxed select-all">
+        <pre className="p-4 rounded-[2px] bg-[#05080D] border border-[#182532] text-[11px] font-mono text-[#35D6C7]/90 overflow-x-auto max-h-56 leading-relaxed select-all">
           {DEMO_VCF_SAMPLE_CONTENT}
         </pre>
-        <p className="text-[11px] font-mono text-slate-500">
+        <p className="text-[10px] font-mono text-[#8B9AAA]">
           Tip: You can download this sample and drag-and-drop it into the Genomic Analysis upload zone to test custom file ingestion.
         </p>
       </div>

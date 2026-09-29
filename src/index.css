@@ -4,97 +4,126 @@
 
 @layer base {
   :root {
-    --bg-primary: #050914;
-    --bg-surface: #0a1124;
-    --border-subtle: rgba(56, 189, 248, 0.15);
+    --bg-lab: #05080D;
+    --bg-secondary: #080D14;
+    --card-lab: #0B111A;
+    --border-lab: #182532;
+    --accent-cyan: #35D6C7;
+    --accent-blue: #4DA3FF;
   }
 
   body {
-    background-color: #050914;
-    color: #e2e8f0;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #05080D;
+    color: #F4F7FA;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     overflow-x: hidden;
+  }
+
+  h1, h2, h3, .font-heading {
+    font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
   }
 }
 
-/* Custom scrollbars */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+/* Subtle Laboratory Grid Background */
+.lab-grid-bg {
+  background-image: 
+    linear-gradient(to right, rgba(24, 37, 50, 0.35) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(24, 37, 50, 0.35) 1px, transparent 1px);
+  background-size: 32px 32px;
 }
 
-::-webkit-scrollbar-track {
-  background: #090e1d;
+/* Precise scientific laboratory card */
+.lab-card {
+  background-color: #0B111A;
+  border: 1px solid #182532;
+  border-radius: 4px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-::-webkit-scrollbar-thumb {
-  background: #1e293b;
+.lab-card:hover {
+  border-color: rgba(53, 214, 199, 0.45);
+}
+
+.lab-card-active {
+  background-color: #0B111A;
+  border: 1px solid #35D6C7;
+  border-radius: 4px;
+}
+
+/* Scientific Controls & Buttons */
+.btn-lab-primary {
+  font-family: 'Space Grotesk', monospace;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background-color: #35D6C7;
+  color: #05080D;
+  border: 1px solid #35D6C7;
   border-radius: 3px;
+  padding: 0.6rem 1.25rem;
+  transition: all 0.15s ease-in-out;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #06b6d4;
+.btn-lab-primary:hover {
+  background-color: #4fe2d4;
+  box-shadow: 0 0 12px rgba(53, 214, 199, 0.35);
 }
 
-/* Glassmorphism utility */
-.glass-panel {
-  background: rgba(10, 17, 36, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(56, 189, 248, 0.12);
+.btn-lab-secondary {
+  font-family: 'Space Grotesk', monospace;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background-color: transparent;
+  color: #F4F7FA;
+  border: 1px solid #182532;
+  border-radius: 3px;
+  padding: 0.6rem 1.25rem;
+  transition: all 0.15s ease-in-out;
 }
 
-.glass-panel-hover {
-  transition: all 0.25s ease-in-out;
+.btn-lab-secondary:hover {
+  border-color: #35D6C7;
+  color: #35D6C7;
 }
 
-.glass-panel-hover:hover {
-  border-color: rgba(6, 182, 212, 0.35);
-  box-shadow: 0 8px 30px rgba(6, 182, 212, 0.08);
-}
-
-/* Biotech OLED styling */
-.oled-screen {
-  background-color: #020617;
-  color: #38bdf8;
+/* OLED Screen Realism */
+.oled-container {
+  background-color: #020408;
+  border: 1px solid #182532;
+  box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.95);
   font-family: 'JetBrains Mono', monospace;
-  box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.9), 0 0 15px rgba(56, 189, 248, 0.2);
-  border: 2px solid #1e293b;
+  color: #35D6C7;
   position: relative;
   overflow: hidden;
 }
 
-.oled-screen::before {
+.oled-container::after {
   content: " ";
   display: block;
   position: absolute;
   top: 0; left: 0; bottom: 0; right: 0;
-  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-  z-index: 2;
-  background-size: 100% 3px, 4px 100%;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+  background-size: 100% 2px;
   pointer-events: none;
+  opacity: 0.5;
 }
 
-.oled-glow-text {
-  text-shadow: 0 0 8px rgba(56, 189, 248, 0.75), 0 0 14px rgba(56, 189, 248, 0.4);
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
 }
 
-/* Scientific grid background */
-.scientific-grid {
-  background-image: radial-gradient(rgba(56, 189, 248, 0.15) 1px, transparent 1px);
-  background-size: 24px 24px;
+::-webkit-scrollbar-track {
+  background: #05080D;
 }
 
-/* Subtle glow badges */
-.badge-glow-cyan {
-  box-shadow: 0 0 10px rgba(6, 182, 212, 0.25);
+::-webkit-scrollbar-thumb {
+  background: #182532;
+  border-radius: 2px;
 }
-.badge-glow-green {
-  box-shadow: 0 0 10px rgba(16, 185, 129, 0.25);
-}
-.badge-glow-amber {
-  box-shadow: 0 0 10px rgba(245, 158, 11, 0.25);
-}
-.badge-glow-rose {
-  box-shadow: 0 0 10px rgba(244, 63, 94, 0.25);
+
+::-webkit-scrollbar-thumb:hover {
+  background: #35D6C7;
 }
