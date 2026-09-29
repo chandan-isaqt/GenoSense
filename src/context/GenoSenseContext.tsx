@@ -221,15 +221,31 @@ export const GenoSenseProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }));
     addApiLog('POST', '/api/v1/hardware/gpio/button-pressed', 200, 4, 'Physical GPIO Pin 17 interrupt triggered');
 
-    await new Promise((r) => setTimeout(r, 800));
+    await new Promise((r) => setTimeout(r, 600));
 
     setState((prev) => ({
       ...prev,
-      oledStatus: 'CONNECTING API...',
+      oledStatus: 'CONNECTING...',
     }));
-    addApiLog('POST', '/api/v1/hardware/edge-pi/sync', 200, 32, 'I2C bus #1 synced with Flask inference server');
+    addApiLog('POST', '/api/v1/hardware/edge-pi/sync', 200, 28, 'Connecting to Flask API gateway');
 
-    await new Promise((r) => setTimeout(r, 900));
+    await new Promise((r) => setTimeout(r, 600));
+
+    setState((prev) => ({
+      ...prev,
+      oledStatus: 'AI PROCESSING...',
+    }));
+    addApiLog('POST', '/api/v1/model/random-forest/evaluate', 200, 42, 'Random Forest 200 trees evaluating features');
+
+    await new Promise((r) => setTimeout(r, 600));
+
+    setState((prev) => ({
+      ...prev,
+      oledStatus: 'EXPLAINING...',
+    }));
+    addApiLog('POST', '/api/v1/model/shap/attribution', 200, 35, 'TreeSHAP computing local feature attributions');
+
+    await new Promise((r) => setTimeout(r, 600));
 
     setState((prev) => ({
       ...prev,

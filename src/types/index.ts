@@ -45,7 +45,10 @@ export type OledScreenState =
   | 'STANDBY'
   | 'READY'
   | 'ANALYZING...'
+  | 'CONNECTING...'
   | 'CONNECTING API...'
+  | 'AI PROCESSING...'
+  | 'EXPLAINING...'
   | 'RESULT READY'
   | 'ERROR';
 
