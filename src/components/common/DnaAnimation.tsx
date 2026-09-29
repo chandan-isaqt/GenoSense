@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { useTheme } from '../../context/ThemeContext';
 
 interface DnaAnimationProps {
   className?: string;
@@ -12,6 +13,7 @@ export const DnaAnimation: React.FC<DnaAnimationProps> = ({
   height = 540,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const { theme, colors } = useTheme();
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -28,6 +30,11 @@ export const DnaAnimation: React.FC<DnaAnimationProps> = ({
     const helixRadius = 85;
     const pairSpacing = height / (numPairs - 2);
 
+    const isDark = theme === 'dark';
+    const primaryHex = colors.primary;
+    const secondaryHex = colors.secondary;
+    const axisColor = isDark ? 'rgba(24, 37, 50, 0.45)' : 'rgba(215, 226, 231, 0.85)';
+
     const render = () => {
       ctx.clearRect(0, 0, width, height);
 
@@ -38,7 +45,7 @@ export const DnaAnimation: React.FC<DnaAnimationProps> = ({
 
       // Draw faint background vertical axis line
       ctx.beginPath();
-      ctx.strokeStyle = 'rgba(24, 37, 50, 0.4)';
+      ctx.strokeStyle = axisColor;
       ctx.setLineDash([4, 6]);
       ctx.lineWidth = 1;
       ctx.moveTo(centerX, 20);
@@ -66,36 +73,51 @@ export const DnaAnimation: React.FC<DnaAnimationProps> = ({
 
         // Render hydrogen bond connecting strand
         const avgZ = (z1 + z2) / 2;
-        const lineAlpha = 0.15 + (avgZ + 1) * 0.12 + (pulseIntensity * 0.5);
+        const lineAlpha = isDark 
+          ? (0.15 + (avgZ + 1) * 0.12 + (pulseIntensity * 0.5))
+          : (0.18 + (avgZ + 1) * 0.14 + (pulseIntensity * 0.4));
+        
         ctx.beginPath();
         ctx.moveTo(x1, y);
         ctx.lineTo(x2, y);
-        ctx.strokeStyle = pulseIntensity > 0
-          ? `rgba(53, 214, 199, ${lineAlpha})`
-          : `rgba(77, 163, 255, ${lineAlpha * 0.6})`;
+        ctx.strokeStyle = isDark
+          ? (pulseIntensity > 0 ? `rgba(53, 214, 199, ${lineAlpha})` : `rgba(77, 163, 255, ${lineAlpha * 0.6})`)
+          : (pulseIntensity > 0 ? `rgba(8, 127, 122, ${lineAlpha})` : `rgba(23, 105, 170, ${lineAlpha * 0.65})`);
         ctx.lineWidth = pulseIntensity > 0 ? 1.5 : 1;
         ctx.stroke();
 
-        // Strand 1 node (Primary Cyan #35D6C7)
+        // Strand 1 node (Primary: Cyan in dark, Deep Teal in light)
         const radius1 = 2.5 + (z1 + 1) * 1.5;
         const alpha1 = 0.35 + (z1 + 1) * 0.32;
         ctx.beginPath();
         ctx.arc(x1, y, radius1 + (pulseIntensity * 2), 0, Math.PI * 2);
-        ctx.fillStyle = pulseIntensity > 0.3
-          ? '#FFFFFF'
-          : `rgba(53, 214, 199, ${alpha1})`;
-        ctx.shadowColor = '#35D6C7';
-        ctx.shadowBlur = pulseIntensity > 0 ? 12 : 5;
+        
+        if (isDark) {
+          ctx.fillStyle = pulseIntensity > 0.3 ? '#FFFFFF' : `rgba(53, 214, 199, ${alpha1})`;
+          ctx.shadowColor = primaryHex;
+          ctx.shadowBlur = pulseIntensity > 0 ? 12 : 5;
+        } else {
+          ctx.fillStyle = pulseIntensity > 0.3 ? primaryHex : `rgba(8, 127, 122, ${alpha1 * 0.95})`;
+          ctx.shadowColor = primaryHex;
+          ctx.shadowBlur = pulseIntensity > 0 ? 6 : 2;
+        }
         ctx.fill();
 
-        // Strand 2 node (Secondary Blue #4DA3FF)
+        // Strand 2 node (Secondary: Blue)
         const radius2 = 2.5 + (z2 + 1) * 1.5;
         const alpha2 = 0.35 + (z2 + 1) * 0.32;
         ctx.beginPath();
         ctx.arc(x2, y, radius2 + (pulseIntensity * 1.5), 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(77, 163, 255, ${alpha2})`;
-        ctx.shadowColor = '#4DA3FF';
-        ctx.shadowBlur = 4;
+        
+        if (isDark) {
+          ctx.fillStyle = `rgba(77, 163, 255, ${alpha2})`;
+          ctx.shadowColor = secondaryHex;
+          ctx.shadowBlur = 4;
+        } else {
+          ctx.fillStyle = `rgba(23, 105, 170, ${alpha2 * 0.95})`;
+          ctx.shadowColor = secondaryHex;
+          ctx.shadowBlur = 2;
+        }
         ctx.fill();
 
         ctx.shadowBlur = 0; // reset shadow
@@ -109,15 +131,15 @@ export const DnaAnimation: React.FC<DnaAnimationProps> = ({
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
-  }, [width, height]);
+  }, [width, height, theme, colors]);
 
   return (
     <div className={`relative flex items-center justify-center select-none ${className}`}>
-      <div className="absolute top-4 right-4 text-[10px] font-mono text-[#8B9AAA]/60 uppercase tracking-widest pointer-events-none">
+      <div className="absolute top-4 right-4 text-[10px] font-mono text-[var(--text-muted)] uppercase tracking-widest pointer-events-none">
         HEURISTIC ROTATION: 0.012 rad/s
       </div>
-      <div className="absolute bottom-4 left-4 text-[10px] font-mono text-[#35D6C7]/70 uppercase tracking-widest pointer-events-none flex items-center gap-1.5">
-        <span className="w-1.5 h-1.5 rounded-full bg-[#35D6C7] animate-ping" />
+      <div className="absolute bottom-4 left-4 text-[10px] font-mono text-[var(--primary)] uppercase tracking-widest pointer-events-none flex items-center gap-1.5">
+        <span className="w-1.5 h-1.5 rounded-full bg-[var(--primary)] animate-ping" />
         LIVE HELIX PROJECTION
       </div>
 
@@ -125,7 +147,7 @@ export const DnaAnimation: React.FC<DnaAnimationProps> = ({
         ref={canvasRef}
         width={width}
         height={height}
-        className="max-w-full h-auto drop-shadow-[0_0_25px_rgba(53,214,199,0.12)]"
+        className="max-w-full h-auto drop-shadow-sm"
       />
     </div>
   );

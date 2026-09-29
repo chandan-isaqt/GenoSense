@@ -27,28 +27,28 @@ export const MarkerTable: React.FC = () => {
 
   return (
     <div className="lab-card p-6 space-y-5">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#182532] pb-3">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[var(--border-color)] pb-3">
         <div>
-          <h3 className="text-base font-display font-bold text-[#F4F7FA] flex items-center gap-2">
-            <Dna className="w-4 h-4 text-[#35D6C7]" />
+          <h3 className="text-base font-display font-bold text-[var(--text-main)] flex items-center gap-2">
+            <Dna className="w-4 h-4 text-[var(--primary)]" />
             GENOMIC MARKER DOSAGE MATRIX (24 TARGETS)
           </h3>
-          <p className="text-xs text-[#8B9AAA] mt-0.5 font-mono">
+          <p className="text-xs text-[var(--text-secondary)] mt-0.5 font-mono">
             Candidate loci mapped to GRCh38.p13 human reference assembly
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
           {/* Category Filter Pills */}
-          <div className="flex items-center gap-1 p-0.5 rounded-[2px] bg-[#05080D] border border-[#182532]">
+          <div className="flex items-center gap-1 p-0.5 rounded-[2px] bg-[var(--bg-secondary)] border border-[var(--border-color)]">
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setFilterCategory(cat)}
                 className={`px-2.5 py-1 text-xs font-mono uppercase tracking-wider transition-colors rounded-[2px] ${
                   filterCategory === cat
-                    ? 'bg-[#0B111A] text-[#35D6C7] border border-[#35D6C7] font-bold'
-                    : 'text-[#8B9AAA] hover:text-[#F4F7FA]'
+                    ? 'bg-[var(--bg-surface)] text-[var(--primary)] border border-[var(--primary)] font-bold shadow-sm'
+                    : 'text-[var(--text-secondary)] hover:text-[var(--text-main)]'
                 }`}
               >
                 {cat}
@@ -58,23 +58,23 @@ export const MarkerTable: React.FC = () => {
 
           {/* Search Input */}
           <div className="relative min-w-[200px]">
-            <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[#8B9AAA]" />
+            <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)]" />
             <input
               type="text"
               placeholder="Search gene or rsID..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-3 py-1 rounded-[2px] bg-[#05080D] border border-[#182532] text-xs text-[#F4F7FA] placeholder-[#8B9AAA] focus:outline-none focus:border-[#35D6C7] font-mono"
+              className="w-full pl-9 pr-3 py-1 rounded-[2px] bg-[var(--bg-secondary)] border border-[var(--border-color)] text-xs text-[var(--text-main)] placeholder-[var(--text-secondary)] focus:outline-none focus:border-[var(--primary)] font-mono"
             />
           </div>
         </div>
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-[2px] border border-[#182532] bg-[#05080D]/50">
+      <div className="overflow-x-auto rounded-[2px] border border-[var(--border-color)] bg-[var(--bg-surface)]">
         <table className="w-full text-left text-xs font-mono border-collapse">
           <thead>
-            <tr className="border-b border-[#182532] bg-[#080D14] text-[#8B9AAA] uppercase text-[10px] tracking-wider">
+            <tr className="border-b border-[var(--border-color)] bg-[var(--bg-secondary)] text-[var(--text-secondary)] uppercase text-[10px] tracking-wider">
               <th className="py-2.5 px-4 font-semibold">Gene</th>
               <th className="py-2.5 px-4 font-semibold">Position</th>
               <th className="py-2.5 px-4 font-semibold">Association</th>
@@ -84,35 +84,35 @@ export const MarkerTable: React.FC = () => {
               <th className="py-2.5 px-4 font-semibold text-center">Inspect</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#182532]/60 text-[#F4F7FA]">
+          <tbody className="divide-y divide-[var(--border-color)]/60 text-[var(--text-main)]">
             {filteredMarkers.map((marker) => (
               <tr
                 key={marker.id}
-                className="hover:bg-[#080D14] transition-colors group cursor-pointer"
+                className="hover:bg-[var(--bg-elevated)] transition-colors group cursor-pointer"
                 onClick={() => selectGene(marker.gene)}
               >
-                <td className="py-2.5 px-4 font-bold text-[#F4F7FA] flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#35D6C7]" />
-                  <span className="text-[#35D6C7]">{marker.gene}</span>
-                  <span className="text-[10px] text-[#8B9AAA] font-mono">({marker.rsId})</span>
+                <td className="py-2.5 px-4 font-bold text-[var(--text-main)] flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--primary)]" />
+                  <span className="text-[var(--primary)]">{marker.gene}</span>
+                  <span className="text-[10px] text-[var(--text-secondary)] font-mono">({marker.rsId})</span>
                 </td>
-                <td className="py-2.5 px-4 text-[#8B9AAA]">{marker.position}</td>
+                <td className="py-2.5 px-4 text-[var(--text-secondary)]">{marker.position}</td>
                 <td className="py-2.5 px-4">
                   <span
                     className={`px-2 py-0.5 rounded-[2px] text-[10px] font-bold uppercase tracking-wider ${
                       marker.association === 'Dengue'
-                        ? 'bg-[#05080D] text-[#35D6C7] border border-[#35D6C7]/40'
+                        ? 'bg-[var(--bg-secondary)] text-[var(--primary)] border border-[var(--primary)]/40'
                         : marker.association === 'Allergy'
-                        ? 'bg-[#05080D] text-[#4DA3FF] border border-[#4DA3FF]/40'
-                        : 'bg-[#05080D] text-[#8B9AAA] border border-[#182532]'
+                        ? 'bg-[var(--bg-secondary)] text-[var(--secondary)] border border-[var(--secondary)]/40'
+                        : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] border border-[var(--border-color)]'
                     }`}
                   >
                     {marker.association}
                   </span>
                 </td>
-                <td className="py-2.5 px-4 text-[#8B9AAA]">{marker.allele}</td>
+                <td className="py-2.5 px-4 text-[var(--text-secondary)]">{marker.allele}</td>
                 <td className="py-2.5 px-4">
-                  <span className="px-1.5 py-0.5 rounded-[2px] bg-[#05080D] border border-[#182532] text-[#F4F7FA] text-[11px]">
+                  <span className="px-1.5 py-0.5 rounded-[2px] bg-[var(--bg-secondary)] border border-[var(--border-color)] text-[var(--text-main)] text-[11px]">
                     {marker.genotype}
                   </span>
                 </td>
@@ -120,10 +120,10 @@ export const MarkerTable: React.FC = () => {
                   <span
                     className={`font-bold px-2 py-0.5 rounded-[2px] ${
                       marker.featureValue === 2
-                        ? 'bg-[#05080D] text-[#35D6C7] border border-[#35D6C7]/50'
+                        ? 'bg-[var(--bg-secondary)] text-[var(--primary)] border border-[var(--primary)]/50'
                         : marker.featureValue === 1
-                        ? 'bg-[#05080D] text-[#4DA3FF] border border-[#4DA3FF]/50'
-                        : 'bg-[#05080D] text-[#8B9AAA]'
+                        ? 'bg-[var(--bg-secondary)] text-[var(--secondary)] border border-[var(--secondary)]/50'
+                        : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
                     }`}
                   >
                     {marker.featureValue}
@@ -135,7 +135,7 @@ export const MarkerTable: React.FC = () => {
                       e.stopPropagation();
                       selectGene(marker.gene);
                     }}
-                    className="p-1 rounded text-[#8B9AAA] hover:text-[#35D6C7] transition-colors"
+                    className="p-1 rounded text-[var(--text-secondary)] hover:text-[var(--primary)] transition-colors"
                     title="Inspect Gene"
                   >
                     <Info className="w-3.5 h-3.5" />
@@ -147,7 +147,7 @@ export const MarkerTable: React.FC = () => {
         </table>
       </div>
 
-      <div className="flex items-center justify-between text-[#8B9AAA] text-[11px] font-mono pt-1">
+      <div className="flex items-center justify-between text-[var(--text-secondary)] text-[11px] font-mono pt-1">
         <span>
           Showing {filteredMarkers.length} of {displayMarkers.length} genomic targets
         </span>

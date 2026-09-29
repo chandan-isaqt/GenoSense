@@ -20,32 +20,32 @@ export const LaboratoryHardwareBench: React.FC = () => {
   return (
     <section className="space-y-8 pt-6">
       {/* Section 05 Header */}
-      <div className="border-b border-[#182532] pb-4">
-        <span className="text-[11px] font-mono text-[#35D6C7] uppercase tracking-widest block">
+      <div className="border-b border-[var(--border-color)] pb-4">
+        <span className="text-[11px] font-mono text-[var(--primary)] uppercase tracking-widest block">
           SECTION 05 — RASPBERRY PI
         </span>
-        <h2 className="text-2xl sm:text-3xl font-display font-bold text-[#F4F7FA] mt-1">
+        <h2 className="text-2xl sm:text-3xl font-display font-bold text-[var(--text-main)] mt-1">
           Edge Intelligence
         </h2>
-        <p className="text-xs sm:text-sm font-mono text-[#8B9AAA] mt-1">
+        <p className="text-xs sm:text-sm font-mono text-[var(--text-secondary)] mt-1">
           Raspberry Pi + OLED • Hardware Bench Simulation
         </p>
       </div>
 
       {/* Bench Layout: Realistic Vector SBC on Left, Physical OLED & Tactile Button on Right */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-        {/* Left: Vector-Style Raspberry Pi Board */}
+        {/* Left: Vector-Style Raspberry Pi Board (Outer card adapts to theme, PCB stays dark) */}
         <div className="lg:col-span-7 lab-card p-6 flex flex-col justify-between space-y-5">
-          <div className="flex items-center justify-between border-b border-[#182532] pb-3 text-xs font-mono">
-            <span className="text-[#F4F7FA] font-bold flex items-center gap-2">
-              <Cpu className="w-4 h-4 text-[#35D6C7]" />
+          <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-3 text-xs font-mono">
+            <span className="text-[var(--text-main)] font-bold flex items-center gap-2">
+              <Cpu className="w-4 h-4 text-[var(--primary)]" />
               RASPBERRY PI 4 MODEL B (ARM64 SBC)
             </span>
-            <span className="text-[#35D6C7]">I2C BUS #1 • IP: 192.168.1.42</span>
+            <span className="text-[var(--primary)] font-semibold">I2C BUS #1 • IP: 192.168.1.42</span>
           </div>
 
-          {/* Realistic Vector Circuit Board Illustration */}
-          <div className="relative p-5 rounded-[4px] bg-[#070C12] border border-[#182532] font-mono text-xs overflow-hidden">
+          {/* Realistic Vector Circuit Board Illustration (PHYSICALLY DARK IN ALL THEMES) */}
+          <div className="relative p-5 rounded-[4px] bg-[#070C12] border border-[#182532] font-mono text-xs overflow-hidden shadow-inner">
             {/* PCB Corner mounting holes */}
             <div className="absolute top-2 left-2 w-3 h-3 rounded-full border border-[#35D6C7]/40 bg-[#05080D]" />
             <div className="absolute top-2 right-2 w-3 h-3 rounded-full border border-[#35D6C7]/40 bg-[#05080D]" />
@@ -104,23 +104,23 @@ export const LaboratoryHardwareBench: React.FC = () => {
             </div>
           </div>
 
-          <div className="text-[10px] font-mono text-[#8B9AAA] flex items-center justify-between">
+          <div className="text-[10px] font-mono text-[var(--text-secondary)] flex items-center justify-between">
             <span>LINUX DEBIAN 12 (BOOKWORM) • LUMA.OLED I2C DRIVER</span>
-            <span className="text-[#35D6C7]">GPIO EVENT: FALLING_EDGE</span>
+            <span className="text-[var(--primary)] font-semibold">GPIO EVENT: FALLING_EDGE</span>
           </div>
         </div>
 
         {/* Right: Physical OLED Screen & Pressable Button */}
         <div className="lg:col-span-5 lab-card p-6 flex flex-col justify-between space-y-6">
-          <div className="flex items-center justify-between border-b border-[#182532] pb-3 text-xs font-mono text-[#8B9AAA]">
-            <span className="uppercase tracking-wider flex items-center gap-1.5 text-[#35D6C7]">
+          <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-3 text-xs font-mono text-[var(--text-secondary)]">
+            <span className="uppercase tracking-wider flex items-center gap-1.5 text-[var(--primary)] font-semibold">
               <Monitor className="w-4 h-4" />
               PHYSICAL OLED DISPLAY
             </span>
             <span>SSD1306 128x64</span>
           </div>
 
-          {/* Physical Monochrome OLED Screen */}
+          {/* Physical Monochrome OLED Screen (REMAINS PHYSICALLY DARK IN ALL THEMES) */}
           <div className="oled-container rounded-[2px] p-5 h-44 flex flex-col justify-between select-none">
             {/* OLED Header */}
             <div className="flex items-center justify-between text-[10px] border-b border-[#182532] pb-1 text-[#35D6C7]/80">
@@ -205,21 +205,21 @@ export const LaboratoryHardwareBench: React.FC = () => {
               animate={{ y: isBtnPressed ? 2 : 0 }}
               disabled={isBusy}
               onClick={handlePressAnalyze}
-              className="w-full py-3.5 px-6 rounded-[3px] bg-[#35D6C7] hover:bg-[#4fe2d4] text-[#05080D] font-display font-bold text-sm tracking-wider uppercase flex items-center justify-center gap-2 transition-all shadow-none disabled:opacity-50"
+              className="w-full py-3.5 px-6 rounded-[3px] bg-[var(--primary)] hover:opacity-90 text-[var(--primary-text)] font-display font-bold text-sm tracking-wider uppercase flex items-center justify-center gap-2 transition-all shadow-none disabled:opacity-50"
             >
               {isBusy ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin text-[#05080D]" />
+                  <Loader2 className="w-4 h-4 animate-spin text-[var(--primary-text)]" />
                   <span>TRANSMITTING...</span>
                 </>
               ) : (
                 <>
-                  <CircleDot className="w-4 h-4 text-[#05080D]" />
+                  <CircleDot className="w-4 h-4 text-[var(--primary-text)]" />
                   <span>PRESS TO ANALYZE</span>
                 </>
               )}
             </motion.button>
-            <span className="text-[10px] font-mono text-[#8B9AAA] block">
+            <span className="text-[10px] font-mono text-[var(--text-secondary)] block">
               GPIO Pin 17 • Hardware Interrupt Signal
             </span>
           </div>
@@ -227,17 +227,17 @@ export const LaboratoryHardwareBench: React.FC = () => {
       </div>
 
       {/* SECTION 06 — API TRANSACTION */}
-      <div className="space-y-4 pt-4 border-t border-[#182532]">
+      <div className="space-y-4 pt-4 border-t border-[var(--border-color)]">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
-            <span className="text-[11px] font-mono text-[#35D6C7] uppercase tracking-widest block">
+            <span className="text-[11px] font-mono text-[var(--primary)] uppercase tracking-widest block">
               SECTION 06 — API TRANSACTION
             </span>
-            <h3 className="text-xl font-display font-bold text-[#F4F7FA] mt-0.5">
+            <h3 className="text-xl font-display font-bold text-[var(--text-main)] mt-0.5">
               Conceptual Data Movement &amp; Telemetry Stream
             </h3>
           </div>
-          <span className="text-xs font-mono text-[#8B9AAA]">
+          <span className="text-xs font-mono text-[var(--text-secondary)]">
             GATEWAY: Flask 3.0 WSGI • Port 5000
           </span>
         </div>
@@ -245,29 +245,29 @@ export const LaboratoryHardwareBench: React.FC = () => {
         {/* Conceptual Data Movement Flow Chart */}
         <div className="lab-card p-4 overflow-x-auto">
           <div className="flex items-center justify-between min-w-[700px] text-xs font-mono text-center gap-2">
-            <span className="p-2 rounded-[2px] bg-[#05080D] border border-[#182532] text-[#F4F7FA] font-bold">
+            <span className="p-2 rounded-[2px] bg-[var(--bg-secondary)] border border-[var(--border-color)] text-[var(--text-main)] font-bold">
               Raspberry Pi
             </span>
-            <span className="text-[#35D6C7]">→ POST /predict →</span>
-            <span className="p-2 rounded-[2px] bg-[#05080D] border border-[#182532] text-[#35D6C7] font-bold">
+            <span className="text-[var(--primary)]">→ POST /predict →</span>
+            <span className="p-2 rounded-[2px] bg-[var(--bg-secondary)] border border-[var(--border-color)] text-[var(--primary)] font-bold">
               Flask API
             </span>
-            <span className="text-[#35D6C7]">→ Evaluate →</span>
-            <span className="p-2 rounded-[2px] bg-[#05080D] border border-[#182532] text-[#F4F7FA] font-bold">
+            <span className="text-[var(--primary)]">→ Evaluate →</span>
+            <span className="p-2 rounded-[2px] bg-[var(--bg-secondary)] border border-[var(--border-color)] text-[var(--text-main)] font-bold">
               Random Forest
             </span>
-            <span className="text-[#35D6C7]">→ Attribute →</span>
-            <span className="p-2 rounded-[2px] bg-[#05080D] border border-[#182532] text-[#4DA3FF] font-bold">
+            <span className="text-[var(--primary)]">→ Attribute →</span>
+            <span className="p-2 rounded-[2px] bg-[var(--bg-secondary)] border border-[var(--border-color)] text-[var(--secondary)] font-bold">
               SHAP
             </span>
-            <span className="text-[#35D6C7]">→ JSON Response →</span>
-            <span className="p-2 rounded-[2px] bg-[#05080D] border border-[#182532] text-[#F4F7FA] font-bold">
+            <span className="text-[var(--primary)]">→ JSON Response →</span>
+            <span className="p-2 rounded-[2px] bg-[var(--bg-secondary)] border border-[var(--border-color)] text-[var(--text-main)] font-bold">
               OLED + Dashboard
             </span>
           </div>
         </div>
 
-        {/* Terminal-like API Monitor */}
+        {/* Terminal-like API Monitor (REMAINS AUTHENTIC DARK TERMINAL IN ALL THEMES) */}
         <div className="lab-card p-5 bg-[#020408] border-[#182532] font-mono text-xs space-y-2">
           <div className="flex items-center justify-between text-[#8B9AAA] border-b border-[#182532] pb-2 text-[11px]">
             <span className="flex items-center gap-2 text-[#35D6C7]">

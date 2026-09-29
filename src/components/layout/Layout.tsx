@@ -7,7 +7,7 @@ import { SYNTHETIC_DISCLAIMER } from '../../data/demoData';
 
 export const Layout: React.FC = () => {
   return (
-    <div className="min-h-screen bg-[#05080D] text-[#F4F7FA] lab-grid-bg flex flex-col font-sans selection:bg-[#35D6C7]/20 selection:text-[#35D6C7]">
+    <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-main)] lab-grid-bg flex flex-col font-sans selection:bg-[var(--primary)]/20 selection:text-[var(--primary)] transition-colors duration-200">
       {/* Premium Top Navigation */}
       <TopNavbar />
 
@@ -17,16 +17,16 @@ export const Layout: React.FC = () => {
       </main>
 
       {/* Subtle Footer Medical / Scientific Disclaimer */}
-      <footer className="w-full border-t border-[#182532] bg-[#05080D]/90 py-5 text-center text-xs text-[#8B9AAA]">
+      <footer className="w-full border-t border-[var(--border-color)] bg-[var(--bg-primary)]/95 py-5 text-center text-xs text-[var(--text-secondary)] transition-colors duration-200">
         <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3 font-mono">
           <div className="flex items-center gap-2 text-left">
-            <AlertCircle className="w-3.5 h-3.5 text-[#F5B942] flex-shrink-0" />
-            <p className="text-[11px] leading-relaxed text-[#8B9AAA]">
-              <strong className="text-[#F5B942] font-semibold uppercase mr-1">Scientific Notice:</strong>
+            <AlertCircle className="w-3.5 h-3.5 text-[var(--warning)] flex-shrink-0" />
+            <p className="text-[11px] leading-relaxed text-[var(--text-secondary)]">
+              <strong className="text-[var(--warning)] font-semibold uppercase mr-1">Scientific Notice:</strong>
               {SYNTHETIC_DISCLAIMER}
             </p>
           </div>
-          <div className="text-[10px] text-[#8B9AAA]/60 flex-shrink-0">
+          <div className="text-[10px] text-[var(--text-muted)] flex-shrink-0">
             GENOSENSE PROTOTYPE v1.2 • GRCh38
           </div>
         </div>

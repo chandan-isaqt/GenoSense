@@ -33,15 +33,15 @@ export const LaboratoryFullDemoSection: React.FC = () => {
     <section className="space-y-6 pt-6">
       {/* Huge CTA Card */}
       <div className="lab-card p-6 sm:p-8 space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#182532] pb-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--border-color)] pb-5">
           <div>
-            <span className="text-[11px] font-mono text-[#35D6C7] uppercase tracking-widest block">
+            <span className="text-[11px] font-mono text-[var(--primary)] uppercase tracking-widest block">
               AUTONOMOUS SYSTEM WORKFLOW
             </span>
-            <h2 className="text-2xl sm:text-3xl font-display font-bold text-[#F4F7FA] mt-1">
+            <h2 className="text-2xl sm:text-3xl font-display font-bold text-[var(--text-main)] mt-1">
               RUN FULL GENOSENSE DEMO
             </h2>
-            <p className="text-xs sm:text-sm font-mono text-[#8B9AAA] mt-1">
+            <p className="text-xs sm:text-sm font-mono text-[var(--text-secondary)] mt-1">
               Executes the end-to-end multi-tier pipeline in sequential automated steps
             </p>
           </div>
@@ -53,12 +53,12 @@ export const LaboratoryFullDemoSection: React.FC = () => {
           >
             {isRunningFullDemo ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin text-[#05080D]" />
+                <Loader2 className="w-4 h-4 animate-spin text-[var(--primary-text)]" />
                 <span>EXECUTING STEP 0{fullDemoStep}/09...</span>
               </>
             ) : (
               <>
-                <Play className="w-4 h-4 fill-current text-[#05080D]" />
+                <Play className="w-4 h-4 fill-current text-[var(--primary-text)]" />
                 <span>START AUTONOMOUS PIPELINE</span>
               </>
             )}
@@ -77,19 +77,19 @@ export const LaboratoryFullDemoSection: React.FC = () => {
                 key={st.num}
                 className={`p-3.5 rounded-[3px] border transition-all text-xs flex items-start gap-3 ${
                   isDone
-                    ? 'bg-[#0B111A] border-[#182532] text-[#F4F7FA]'
+                    ? 'bg-[var(--bg-surface)] border-[var(--border-color)] text-[var(--text-main)]'
                     : isCurrent
-                    ? 'bg-[#0B111A] border-[#35D6C7] text-[#35D6C7]'
-                    : 'bg-[#080D14] border-[#182532]/60 text-[#8B9AAA]/60'
+                    ? 'bg-[var(--bg-surface)] border-[var(--primary)] text-[var(--primary)] shadow-sm'
+                    : 'bg-[var(--bg-secondary)] border-[var(--border-color)]/60 text-[var(--text-secondary)]/70'
                 }`}
               >
                 <div className="flex-shrink-0 mt-0.5">
                   {isDone ? (
-                    <CheckCircle2 className="w-4 h-4 text-[#35D6C7]" />
+                    <CheckCircle2 className="w-4 h-4 text-[var(--primary)]" />
                   ) : isCurrent ? (
-                    <Loader2 className="w-4 h-4 text-[#35D6C7] animate-spin" />
+                    <Loader2 className="w-4 h-4 text-[var(--primary)] animate-spin" />
                   ) : (
-                    <span className="w-4 h-4 rounded-full border border-[#182532] flex items-center justify-center text-[10px] text-[#8B9AAA]">
+                    <span className="w-4 h-4 rounded-full border border-[var(--border-color)] flex items-center justify-center text-[10px] text-[var(--text-secondary)]">
                       {stepNum}
                     </span>
                   )}
@@ -97,10 +97,10 @@ export const LaboratoryFullDemoSection: React.FC = () => {
 
                 <div className="min-w-0">
                   <div className="flex items-center gap-1.5 font-bold">
-                    <span className="text-[10px] text-[#8B9AAA]">{st.num}</span>
+                    <span className="text-[10px] text-[var(--text-secondary)]">{st.num}</span>
                     <span className="truncate">{st.label}</span>
                   </div>
-                  <span className="text-[10px] text-[#8B9AAA] block truncate mt-0.5">{st.sub}</span>
+                  <span className="text-[10px] text-[var(--text-secondary)] block truncate mt-0.5">{st.sub}</span>
                 </div>
               </div>
             );
@@ -112,21 +112,21 @@ export const LaboratoryFullDemoSection: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="p-6 rounded-[3px] bg-[#080D14] border border-[#35D6C7] space-y-4"
+            className="p-6 rounded-[3px] bg-[var(--bg-secondary)] border border-[var(--primary)] space-y-4 shadow-sm"
           >
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#182532] pb-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[var(--border-color)] pb-4">
               <div>
-                <span className="text-xs font-mono font-bold text-[#35D6C7] uppercase tracking-widest block">
+                <span className="text-xs font-mono font-bold text-[var(--primary)] uppercase tracking-widest block">
                   ✓ SYSTEM ANALYSIS COMPLETE
                 </span>
                 <div className="flex items-baseline gap-3 mt-1">
-                  <span className="text-4xl font-display font-black text-[#F4F7FA]">
+                  <span className="text-4xl font-display font-black text-[var(--text-main)]">
                     {riskScore}%
                   </span>
-                  <span className="px-2 py-0.5 rounded-[2px] bg-[#05080D] border border-[#FF6678]/50 text-[#FF6678] font-mono text-xs font-bold uppercase">
+                  <span className="px-2 py-0.5 rounded-[2px] bg-[var(--bg-surface)] border border-[var(--danger)]/50 text-[var(--danger)] font-mono text-xs font-bold uppercase">
                     {riskLevel}
                   </span>
-                  <span className="text-xs font-mono text-[#8B9AAA]">
+                  <span className="text-xs font-mono text-[var(--text-secondary)]">
                     (MODEL SCORE • NON-CLINICAL)
                   </span>
                 </div>
@@ -134,11 +134,11 @@ export const LaboratoryFullDemoSection: React.FC = () => {
 
               {/* TOP FEATURES */}
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-xs font-mono text-[#8B9AAA]">TOP FEATURES:</span>
+                <span className="text-xs font-mono text-[var(--text-secondary)]">TOP FEATURES:</span>
                 {topFeatures.map((gene) => (
                   <span
                     key={gene}
-                    className="px-2.5 py-1 rounded-[2px] bg-[#05080D] border border-[#182532] text-[#35D6C7] text-xs font-mono font-bold"
+                    className="px-2.5 py-1 rounded-[2px] bg-[var(--bg-surface)] border border-[var(--border-color)] text-[var(--primary)] text-xs font-mono font-bold"
                   >
                     {gene}
                   </span>

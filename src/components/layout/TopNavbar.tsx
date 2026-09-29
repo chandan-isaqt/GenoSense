@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { Play, Sparkles, FileText, RotateCcw, Menu, X, Dna } from 'lucide-react';
 import { useGenoSenseDemo } from '../../hooks/useGenoSenseDemo';
+import { ThemeToggle } from './ThemeToggle';
 
 export const TopNavbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -19,18 +20,18 @@ export const TopNavbar: React.FC = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-[#05080D]/95 backdrop-blur-md border-b border-[#182532]">
+    <header className="sticky top-0 z-40 w-full bg-[var(--bg-primary)]/95 backdrop-blur-md border-b border-[var(--border-color)] transition-colors duration-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Left: Brand Identity with live pulse indicator */}
         <NavLink to="/" className="flex items-center gap-2.5 group">
-          <div className="w-8 h-8 rounded-[4px] bg-[#0B111A] border border-[#182532] group-hover:border-[#35D6C7] flex items-center justify-center transition-colors">
-            <Dna className="w-4 h-4 text-[#35D6C7]" />
+          <div className="w-8 h-8 rounded-[4px] bg-[var(--bg-surface)] border border-[var(--border-color)] group-hover:border-[var(--primary)] flex items-center justify-center transition-colors">
+            <Dna className="w-4 h-4 text-[var(--primary)]" />
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="font-display font-bold text-lg tracking-wider text-[#F4F7FA]">
+            <span className="font-display font-bold text-lg tracking-wider text-[var(--text-main)]">
               GENOSENSE
             </span>
-            <span className="w-1.5 h-1.5 rounded-full bg-[#35D6C7] shadow-[0_0_8px_#35D6C7] animate-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--primary)] shadow-[0_0_8px_var(--primary)] animate-pulse" />
           </div>
         </NavLink>
 
@@ -44,8 +45,8 @@ export const TopNavbar: React.FC = () => {
                 to={link.path}
                 className={`px-3 py-1.5 text-xs font-mono uppercase tracking-wider transition-colors rounded-[3px] ${
                   isActive
-                    ? 'text-[#35D6C7] bg-[#0B111A] border border-[#182532] shadow-[0_0_8px_rgba(53,214,199,0.15)] font-semibold'
-                    : 'text-[#8B9AAA] hover:text-[#F4F7FA] hover:bg-[#0B111A]/50'
+                    ? 'text-[var(--primary)] bg-[var(--bg-surface)] border border-[var(--border-color)] shadow-sm font-semibold'
+                    : 'text-[var(--text-secondary)] hover:text-[var(--text-main)] hover:bg-[var(--bg-surface)]/50'
                 }`}
               >
                 {link.name}
@@ -54,33 +55,36 @@ export const TopNavbar: React.FC = () => {
           })}
         </nav>
 
-        {/* Right: Actions */}
-        <div className="flex items-center gap-3">
+        {/* Right: Actions and Theme Switcher */}
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          {/* Theme Toggle Component */}
+          <ThemeToggle />
+
           {predictionReady && (
-            <div className="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-[3px] bg-[#0B111A] border border-[#182532] text-xs font-mono">
-              <span className="text-[#8B9AAA]">RISK:</span>
-              <span className="text-[#35D6C7] font-bold">{riskScore}%</span>
+            <div className="hidden lg:flex items-center gap-2 px-2.5 py-1 rounded-[3px] bg-[var(--bg-surface)] border border-[var(--border-color)] text-xs font-mono">
+              <span className="text-[var(--text-secondary)]">RISK:</span>
+              <span className="text-[var(--primary)] font-bold">{riskScore}%</span>
             </div>
           )}
 
           <button
             onClick={() => setReportModalOpen(true)}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono uppercase tracking-wider rounded-[3px] bg-[#0B111A] hover:bg-[#182532] text-[#8B9AAA] hover:text-[#F4F7FA] border border-[#182532] transition-colors"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono uppercase tracking-wider rounded-[3px] bg-[var(--bg-surface)] hover:bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:text-[var(--text-main)] border border-[var(--border-color)] transition-colors"
             title="Open Analysis Dossier"
           >
-            <FileText className="w-3.5 h-3.5 text-[#35D6C7]" />
+            <FileText className="w-3.5 h-3.5 text-[var(--primary)]" />
             <span>REPORT</span>
           </button>
 
           <button
             onClick={runFullDemo}
             disabled={isRunningFullDemo}
-            className="btn-lab-primary text-xs flex items-center gap-2 py-2 px-4 shadow-none disabled:opacity-50"
+            className="btn-lab-primary text-xs flex items-center gap-2 py-1.5 px-3.5 sm:py-2 sm:px-4 shadow-none disabled:opacity-50"
           >
             {isRunningFullDemo ? (
               <>
                 <Sparkles className="w-3.5 h-3.5 animate-spin" />
-                <span>EXECUTING...</span>
+                <span className="hidden sm:inline">EXECUTING...</span>
               </>
             ) : (
               <>
@@ -92,8 +96,9 @@ export const TopNavbar: React.FC = () => {
 
           <button
             onClick={resetDemo}
-            className="p-2 rounded-[3px] bg-[#0B111A] border border-[#182532] text-[#8B9AAA] hover:text-[#F4F7FA] hover:border-[#35D6C7]/50 transition-colors"
+            className="p-1.5 sm:p-2 rounded-[3px] bg-[var(--bg-surface)] border border-[var(--border-color)] text-[var(--text-secondary)] hover:text-[var(--text-main)] hover:border-[var(--primary)]/50 transition-colors"
             title="Reset Simulation State"
+            aria-label="Reset Simulation"
           >
             <RotateCcw className="w-3.5 h-3.5" />
           </button>
@@ -101,7 +106,8 @@ export const TopNavbar: React.FC = () => {
           {/* Mobile hamburger */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-[3px] bg-[#0B111A] border border-[#182532] text-[#8B9AAA] hover:text-[#F4F7FA]"
+            className="md:hidden p-1.5 rounded-[3px] bg-[var(--bg-surface)] border border-[var(--border-color)] text-[var(--text-secondary)] hover:text-[var(--text-main)]"
+            aria-label="Toggle Navigation Menu"
           >
             {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
           </button>
@@ -110,7 +116,7 @@ export const TopNavbar: React.FC = () => {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-[#182532] bg-[#080D14] px-4 py-3 space-y-1">
+        <div className="md:hidden border-t border-[var(--border-color)] bg-[var(--bg-secondary)] px-4 py-3 space-y-1 transition-colors duration-200">
           {navLinks.map((link) => (
             <NavLink
               key={link.path}
@@ -119,15 +125,15 @@ export const TopNavbar: React.FC = () => {
               className={({ isActive }) =>
                 `block px-3 py-2 text-xs font-mono uppercase tracking-wider rounded-[3px] ${
                   isActive
-                    ? 'text-[#35D6C7] bg-[#0B111A] border border-[#35D6C7]/40 font-bold'
-                    : 'text-[#8B9AAA] hover:text-[#F4F7FA] hover:bg-[#0B111A]'
+                    ? 'text-[var(--primary)] bg-[var(--bg-surface)] border border-[var(--primary)]/40 font-bold'
+                    : 'text-[var(--text-secondary)] hover:text-[var(--text-main)] hover:bg-[var(--bg-surface)]'
                 }`
               }
             >
               {link.name}
             </NavLink>
           ))}
-          <div className="pt-2 border-t border-[#182532] flex gap-2">
+          <div className="pt-2 border-t border-[var(--border-color)] flex gap-2">
             <button
               onClick={() => {
                 setMobileMenuOpen(false);

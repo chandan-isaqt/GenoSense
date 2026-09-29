@@ -31,12 +31,12 @@ export const LaboratoryAiModelSection: React.FC = () => {
   return (
     <section className="space-y-6 pt-6">
       {/* Section Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-[#182532] pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-[var(--border-color)] pb-4">
         <div>
-          <span className="text-[11px] font-mono text-[#35D6C7] uppercase tracking-widest block">
+          <span className="text-[11px] font-mono text-[var(--primary)] uppercase tracking-widest block">
             SECTION 03 — AI MODEL
           </span>
-          <h2 className="text-2xl sm:text-3xl font-display font-bold text-[#F4F7FA] mt-1">
+          <h2 className="text-2xl sm:text-3xl font-display font-bold text-[var(--text-main)] mt-1">
             Random Forest Inference
           </h2>
         </div>
@@ -64,36 +64,36 @@ export const LaboratoryAiModelSection: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         {/* Left: Tree Bagging Architecture Visualization */}
         <div className="lg:col-span-7 lab-card p-6 flex flex-col justify-between space-y-5">
-          <div className="flex items-center justify-between border-b border-[#182532] pb-3 text-xs font-mono">
-            <span className="text-[#F4F7FA] font-bold flex items-center gap-2">
-              <TreeDeciduous className="w-4 h-4 text-[#35D6C7]" />
+          <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-3 text-xs font-mono">
+            <span className="text-[var(--text-main)] font-bold flex items-center gap-2">
+              <TreeDeciduous className="w-4 h-4 text-[var(--primary)]" />
               RANDOM FOREST ENSEMBLE
             </span>
-            <span className="text-[#35D6C7]">{randomForestTrees || 200} TREES • BAGGING</span>
+            <span className="text-[var(--primary)] font-semibold">{randomForestTrees || 200} TREES • BAGGING</span>
           </div>
 
-          {/* ASCII / Node Convergence Graph */}
-          <div className="p-4 bg-[#05080D] border border-[#182532] rounded-[3px] font-mono text-xs overflow-x-auto">
-            <div className="text-[10px] text-[#8B9AAA] uppercase tracking-wider mb-3">
+          {/* Parallel Decision Tree Convergence Diagram */}
+          <div className="p-4 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-[3px] font-mono text-xs overflow-x-auto">
+            <div className="text-[10px] text-[var(--text-secondary)] uppercase tracking-wider mb-3">
               PARALLEL DECISION TREE CONVERGENCE DIAGRAM
             </div>
 
-            <div className="space-y-1.5 text-xs text-[#8B9AAA]">
+            <div className="space-y-1.5 text-xs text-[var(--text-secondary)]">
               {sampleTrees.map((tree, idx) => (
                 <div key={tree.id} className="flex items-center gap-2">
-                  <span className="text-[#35D6C7] font-bold">{tree.label}</span>
-                  <span className="text-[#182532]">─</span>
-                  <span className="text-[10px] text-[#8B9AAA]">
+                  <span className="text-[var(--primary)] font-bold">{tree.label}</span>
+                  <span className="text-[var(--border-color)] font-mono">─</span>
+                  <span className="text-[10px] text-[var(--text-secondary)]">
                     (d:{tree.depth})
                   </span>
-                  <span className="text-[#182532]">
+                  <span className="text-[var(--border-color)] font-mono">
                     {idx === 0 ? '─┐' : idx === sampleTrees.length - 1 ? '─┘' : '─┤'}
                   </span>
                   {idx === 2 && (
-                    <span className="text-[#4DA3FF] ml-2 font-bold flex items-center gap-1">
+                    <span className="text-[var(--secondary)] ml-2 font-bold flex items-center gap-1">
                       ──→ AGGREGATION ──→ SCORE
                       {modelRunning && (
-                        <span className="w-2 h-2 rounded-full bg-[#35D6C7] animate-ping ml-1" />
+                        <span className="w-2 h-2 rounded-full bg-[var(--primary)] animate-ping ml-1" />
                       )}
                     </span>
                   )}
@@ -103,26 +103,26 @@ export const LaboratoryAiModelSection: React.FC = () => {
             </div>
 
             {/* Trees processing status */}
-            <div className="mt-4 pt-3 border-t border-[#182532] flex items-center justify-between text-[11px] text-[#8B9AAA]">
+            <div className="mt-4 pt-3 border-t border-[var(--border-color)] flex items-center justify-between text-[11px] text-[var(--text-secondary)]">
               <span>Bootstrap: 24 features subsampled</span>
-              <span className="text-[#35D6C7]">
+              <span className="text-[var(--primary)] font-bold">
                 {modelRunning ? 'PROCESSING BATCHES...' : predictionReady ? 'CONVERGENCE ACHIEVED' : 'STANDBY'}
               </span>
             </div>
           </div>
 
           <div className="grid grid-cols-3 gap-3 text-center font-mono text-xs">
-            <div className="p-2.5 bg-[#05080D] border border-[#182532] rounded-[2px]">
-              <span className="text-[10px] text-[#8B9AAA] block">Estimators</span>
-              <span className="font-bold text-[#F4F7FA] mt-0.5 block">200</span>
+            <div className="p-2.5 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-[2px]">
+              <span className="text-[10px] text-[var(--text-secondary)] block">Estimators</span>
+              <span className="font-bold text-[var(--text-main)] mt-0.5 block">200</span>
             </div>
-            <div className="p-2.5 bg-[#05080D] border border-[#182532] rounded-[2px]">
-              <span className="text-[10px] text-[#8B9AAA] block">Features Used</span>
-              <span className="font-bold text-[#35D6C7] mt-0.5 block">{totalFeatures || 24}</span>
+            <div className="p-2.5 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-[2px]">
+              <span className="text-[10px] text-[var(--text-secondary)] block">Features Used</span>
+              <span className="font-bold text-[var(--primary)] mt-0.5 block">{totalFeatures || 24}</span>
             </div>
-            <div className="p-2.5 bg-[#05080D] border border-[#182532] rounded-[2px]">
-              <span className="text-[10px] text-[#8B9AAA] block">Latency</span>
-              <span className="font-bold text-[#4DA3FF] mt-0.5 block">42ms</span>
+            <div className="p-2.5 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-[2px]">
+              <span className="text-[10px] text-[var(--text-secondary)] block">Latency</span>
+              <span className="font-bold text-[var(--secondary)] mt-0.5 block">42ms</span>
             </div>
           </div>
         </div>
@@ -131,8 +131,8 @@ export const LaboratoryAiModelSection: React.FC = () => {
         <div className="lg:col-span-5 space-y-6 flex flex-col justify-between">
           {/* RISK RESULT BLOCK */}
           <div className="lab-card p-6 text-center space-y-3 relative overflow-hidden">
-            <div className="flex items-center justify-between text-[11px] font-mono border-b border-[#182532] pb-2 text-[#8B9AAA]">
-              <span className="uppercase tracking-widest text-[#35D6C7]">
+            <div className="flex items-center justify-between text-[11px] font-mono border-b border-[var(--border-color)] pb-2 text-[var(--text-secondary)]">
+              <span className="uppercase tracking-widest text-[var(--primary)] font-semibold">
                 PROTOTYPE MODEL OUTPUT
               </span>
               <span className="text-[10px]">SYNTHETIC OUTPUT</span>
@@ -140,27 +140,27 @@ export const LaboratoryAiModelSection: React.FC = () => {
 
             {/* Giant 73% in Space Grotesk */}
             <div className="py-2">
-              <div className="text-6xl sm:text-7xl font-display font-black text-[#F4F7FA] tracking-tight">
+              <div className="text-6xl sm:text-7xl font-display font-black text-[var(--text-main)] tracking-tight">
                 {predictionReady ? `${riskScore}%` : '73%'}
               </div>
-              <div className="mt-1 font-mono text-xs uppercase tracking-widest text-[#8B9AAA]">
+              <div className="mt-1 font-mono text-xs uppercase tracking-widest text-[var(--text-secondary)]">
                 MODEL SCORE
               </div>
             </div>
 
             {/* Risk Badge */}
-            <div className="inline-block px-3 py-1 rounded-[2px] bg-[#05080D] border border-[#FF6678]/50 text-[#FF6678] font-mono text-xs font-bold tracking-wider">
+            <div className="inline-block px-3 py-1 rounded-[2px] bg-[var(--bg-secondary)] border border-[var(--danger)]/50 text-[var(--danger)] font-mono text-xs font-bold tracking-wider">
               {predictionReady ? riskLevel : 'HIGH'}
             </div>
 
-            <div className="pt-2 text-[10px] font-mono text-[#8B9AAA] border-t border-[#182532]">
+            <div className="pt-2 text-[10px] font-mono text-[var(--text-secondary)] border-t border-[var(--border-color)]">
               Synthetic demonstration output
             </div>
           </div>
 
           {/* DISEASE OUTPUT: 3 Thin Horizontal Scientific Gauges */}
           <div className="lab-card p-6 space-y-4">
-            <div className="text-[11px] font-mono uppercase tracking-widest text-[#8B9AAA] border-b border-[#182532] pb-2">
+            <div className="text-[11px] font-mono uppercase tracking-widest text-[var(--text-secondary)] border-b border-[var(--border-color)] pb-2">
               DISEASE PROTOTYPE COMPARISON GAUGES
             </div>
 
@@ -168,16 +168,16 @@ export const LaboratoryAiModelSection: React.FC = () => {
               {diseaseGauges.map((item) => (
                 <div key={item.name} className="space-y-1">
                   <div className="flex items-center justify-between">
-                    <span className="text-[#F4F7FA] font-bold tracking-wider">{item.name}</span>
-                    <span className="text-[#35D6C7] font-display font-bold text-sm">
+                    <span className="text-[var(--text-main)] font-bold tracking-wider">{item.name}</span>
+                    <span className="text-[var(--primary)] font-display font-bold text-sm">
                       {item.score}
                     </span>
                   </div>
 
                   {/* Thin 2px Scientific Gauge */}
-                  <div className="w-full h-1 bg-[#05080D] border border-[#182532] overflow-hidden">
+                  <div className="w-full h-1 bg-[var(--bg-secondary)] border border-[var(--border-color)] overflow-hidden">
                     <div
-                      className="h-full bg-[#35D6C7] transition-all duration-500"
+                      className="h-full bg-[var(--primary)] transition-all duration-500"
                       style={{ width: `${item.score}%` }}
                     />
                   </div>
@@ -185,7 +185,7 @@ export const LaboratoryAiModelSection: React.FC = () => {
               ))}
             </div>
 
-            <div className="text-[10px] font-mono text-[#8B9AAA]/70 text-right">
+            <div className="text-[10px] font-mono text-[var(--text-muted)] text-right">
               CALIBRATED ZERO-CENTERED PROBABILITIES
             </div>
           </div>

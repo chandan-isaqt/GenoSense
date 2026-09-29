@@ -107,16 +107,16 @@ export const ScientificPipelineSection: React.FC = () => {
   return (
     <section id="pipeline-section" className="space-y-6 pt-6">
       {/* Section Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-[#182532] pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-[var(--border-color)] pb-4">
         <div>
-          <span className="text-[11px] font-mono text-[#35D6C7] uppercase tracking-widest block">
+          <span className="text-[11px] font-mono text-[var(--primary)] uppercase tracking-widest block">
             SECTION 01 — THE PIPELINE
           </span>
-          <h2 className="text-2xl sm:text-3xl font-display font-bold text-[#F4F7FA] mt-1">
+          <h2 className="text-2xl sm:text-3xl font-display font-bold text-[var(--text-main)] mt-1">
             From Genome to Insight
           </h2>
         </div>
-        <p className="text-xs font-mono text-[#8B9AAA]">
+        <p className="text-xs font-mono text-[var(--text-secondary)]">
           Click any node to expand low-level scientific specifications
         </p>
       </div>
@@ -124,10 +124,10 @@ export const ScientificPipelineSection: React.FC = () => {
       {/* Horizontal Connected Pipeline with Travelling Data Pulse */}
       <div className="relative py-4 overflow-x-auto">
         {/* Continuous Connecting Line */}
-        <div className="hidden lg:block absolute top-1/2 left-6 right-6 h-[1px] bg-[#182532] -translate-y-1/2 z-0">
-          {/* Animated Travelling Cyan Data Pulse */}
+        <div className="hidden lg:block absolute top-1/2 left-6 right-6 h-[1px] bg-[var(--border-color)] -translate-y-1/2 z-0">
+          {/* Animated Travelling Data Pulse */}
           <motion.div
-            className="w-24 h-[2px] bg-gradient-to-r from-transparent via-[#35D6C7] to-transparent shadow-[0_0_8px_#35D6C7]"
+            className="w-24 h-[2px] bg-gradient-to-r from-transparent via-[var(--primary)] to-transparent shadow-[0_0_8px_var(--primary)]"
             animate={{
               x: ['0%', '1000%'],
             }}
@@ -154,34 +154,34 @@ export const ScientificPipelineSection: React.FC = () => {
                 onClick={() => setSelectedNodeId(node.id)}
                 className={`cursor-pointer p-3 rounded-[3px] border transition-all text-left flex flex-col justify-between h-36 ${
                   isSelected
-                    ? 'bg-[#0B111A] border-[#35D6C7] shadow-[0_0_12px_rgba(53,214,199,0.2)]'
+                    ? 'bg-[var(--bg-surface)] border-[var(--primary)] shadow-sm ring-1 ring-[var(--primary)]/30'
                     : isCurrent
-                    ? 'bg-[#0B111A] border-[#35D6C7] animate-pulse'
+                    ? 'bg-[var(--bg-surface)] border-[var(--primary)] animate-pulse'
                     : isComplete
-                    ? 'bg-[#0B111A] border-[#182532] hover:border-[#35D6C7]/50'
-                    : 'bg-[#080D14] border-[#182532] hover:border-[#35D6C7]/30 opacity-75'
+                    ? 'bg-[var(--bg-surface)] border-[var(--border-color)] hover:border-[var(--primary)]/50'
+                    : 'bg-[var(--bg-secondary)] border-[var(--border-color)] hover:border-[var(--primary)]/30 opacity-80 hover:opacity-100'
                 }`}
               >
                 <div>
                   <div className="flex items-center justify-between text-xs font-mono mb-2">
-                    <span className="text-[#8B9AAA] text-[10px]">{node.step}</span>
+                    <span className="text-[var(--text-secondary)] text-[10px]">{node.step}</span>
                     {isComplete ? (
-                      <CheckCircle2 className="w-3.5 h-3.5 text-[#35D6C7]" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-[var(--primary)]" />
                     ) : (
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#182532]" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-[var(--border-color)]" />
                     )}
                   </div>
 
-                  <div className="p-1.5 w-fit rounded-[2px] bg-[#05080D] border border-[#182532] text-[#35D6C7] mb-2">
+                  <div className="p-1.5 w-fit rounded-[2px] bg-[var(--bg-elevated)] border border-[var(--border-color)] text-[var(--primary)] mb-2">
                     <Icon className="w-4 h-4" />
                   </div>
 
-                  <h3 className="font-display font-bold text-xs text-[#F4F7FA] tracking-wide leading-tight">
+                  <h3 className="font-display font-bold text-xs text-[var(--text-main)] tracking-wide leading-tight">
                     {node.title}
                   </h3>
                 </div>
 
-                <p className="text-[10px] text-[#8B9AAA] font-mono leading-tight truncate">
+                <p className="text-[10px] text-[var(--text-secondary)] font-mono leading-tight truncate">
                   {node.shortDesc}
                 </p>
               </div>
@@ -198,29 +198,29 @@ export const ScientificPipelineSection: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -6 }}
           transition={{ duration: 0.2 }}
-          className="lab-card p-5 border-l-2 border-l-[#35D6C7] space-y-3"
+          className="lab-card p-5 border-l-2 border-l-[var(--primary)] space-y-3"
         >
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#182532] pb-2.5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[var(--border-color)] pb-2.5">
             <div className="flex items-center gap-3">
-              <span className="text-xs font-mono font-bold text-[#35D6C7] px-2 py-0.5 rounded-[2px] bg-[#05080D] border border-[#182532]">
+              <span className="text-xs font-mono font-bold text-[var(--primary)] px-2 py-0.5 rounded-[2px] bg-[var(--bg-secondary)] border border-[var(--border-color)]">
                 NODE {selectedNode.step}
               </span>
-              <h3 className="font-display font-bold text-base text-[#F4F7FA] tracking-wide">
+              <h3 className="font-display font-bold text-base text-[var(--text-main)] tracking-wide">
                 {selectedNode.title} — {selectedNode.shortDesc}
               </h3>
             </div>
-            <span className="text-[11px] font-mono text-[#8B9AAA]">
+            <span className="text-[11px] font-mono text-[var(--text-secondary)]">
               STATUS: {predictionReady ? 'VERIFIED' : 'READY'}
             </span>
           </div>
 
-          <p className="text-xs sm:text-sm text-[#F4F7FA] leading-relaxed">
+          <p className="text-xs sm:text-sm text-[var(--text-main)] leading-relaxed">
             {selectedNode.detail}
           </p>
 
-          <div className="p-2.5 rounded-[2px] bg-[#05080D] border border-[#182532] text-xs font-mono text-[#35D6C7] flex items-center justify-between">
+          <div className="p-2.5 rounded-[2px] bg-[var(--bg-secondary)] border border-[var(--border-color)] text-xs font-mono text-[var(--primary)] flex items-center justify-between">
             <span>{selectedNode.techSpec}</span>
-            <span className="text-[#8B9AAA] text-[10px]">REAL-TIME REPRODUCIBLE</span>
+            <span className="text-[var(--text-secondary)] text-[10px]">REAL-TIME REPRODUCIBLE</span>
           </div>
         </motion.div>
       </AnimatePresence>
