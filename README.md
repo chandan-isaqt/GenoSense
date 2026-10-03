@@ -126,3 +126,4 @@ const response = await fetch(`${API_BASE_URL}/predict`, {
 });
 return response.json();
 ```
+# GenoSense
