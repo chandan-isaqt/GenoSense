@@ -10,7 +10,7 @@ export const ThemeToggle: React.FC = () => {
     <div
       role="radiogroup"
       aria-label="Color theme selector"
-      className="inline-flex items-center p-0.5 rounded-[4px] border border-[var(--border-color)] bg-[var(--bg-secondary)] transition-colors duration-200 select-none"
+      className="inline-flex items-center p-0.5 rounded-lg border border-[var(--border-color)] bg-[var(--bg-secondary)] transition-colors duration-200 select-none"
     >
       {/* Light option */}
       <button
@@ -19,7 +19,7 @@ export const ThemeToggle: React.FC = () => {
         aria-checked={theme === 'light'}
         aria-label="Switch to Light Theme"
         onClick={() => setTheme('light')}
-        className={`relative flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-mono tracking-wider uppercase transition-colors duration-150 rounded-[3px] z-10 ${
+        className={`relative flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-mono tracking-wider uppercase transition-colors duration-150 rounded-md z-10 ${
           theme === 'light'
             ? 'text-[var(--primary)] font-bold'
             : 'text-[var(--text-secondary)] hover:text-[var(--text-main)]'
@@ -28,7 +28,7 @@ export const ThemeToggle: React.FC = () => {
         {theme === 'light' && (
           <motion.div
             layoutId="theme-active-pill"
-            className="absolute inset-0 rounded-[3px] bg-[var(--bg-surface)] border border-[var(--primary)]/40 shadow-sm z-[-1]"
+            className="absolute inset-0 rounded-md bg-[var(--bg-surface)] border border-[var(--primary)]/40 shadow-sm z-[-1]"
             transition={{ type: 'spring', stiffness: 450, damping: 32 }}
           />
         )}
@@ -43,7 +43,7 @@ export const ThemeToggle: React.FC = () => {
         aria-checked={theme === 'dark'}
         aria-label="Switch to Dark Theme"
         onClick={() => setTheme('dark')}
-        className={`relative flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-mono tracking-wider uppercase transition-colors duration-150 rounded-[3px] z-10 ${
+        className={`relative flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-mono tracking-wider uppercase transition-colors duration-150 rounded-md z-10 ${
           theme === 'dark'
             ? 'text-[var(--primary)] font-bold'
             : 'text-[var(--text-secondary)] hover:text-[var(--text-main)]'
@@ -52,7 +52,7 @@ export const ThemeToggle: React.FC = () => {
         {theme === 'dark' && (
           <motion.div
             layoutId="theme-active-pill"
-            className="absolute inset-0 rounded-[3px] bg-[var(--bg-surface)] border border-[var(--primary)]/40 shadow-sm z-[-1]"
+            className="absolute inset-0 rounded-md bg-[var(--bg-surface)] border border-[var(--primary)]/40 shadow-sm z-[-1]"
             transition={{ type: 'spring', stiffness: 450, damping: 32 }}
           />
         )}

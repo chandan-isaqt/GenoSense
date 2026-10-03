@@ -4,149 +4,156 @@
 
 @layer base {
   :root {
-    --bg-primary: #F5F9FA;
-    --bg-secondary: #EAF1F4;
+    --bg-primary: #F4F8F9;
+    --bg-secondary: #E8F0F2;
     --bg-surface: #FFFFFF;
     --bg-elevated: #F8FBFC;
-    --border-color: #D7E2E7;
+    --border-color: #D3E0E8;
     --border-highlight: #087F7A;
     --primary: #087F7A;
     --primary-hover: #0a948e;
     --primary-text: #FFFFFF;
     --secondary: #1769AA;
     --text-main: #102027;
-    --text-secondary: #52656D;
-    --text-muted: #718792;
-    --warning: #A56A00;
-    --danger: #C63D4F;
-    --grid-line: rgba(215, 226, 231, 0.7);
-    --card-shadow: 0 1px 3px 0 rgba(16, 32, 39, 0.05), 0 1px 2px -1px rgba(16, 32, 39, 0.03);
+    --text-secondary: #556877;
+    --text-muted: #7A8E9E;
+    --warning: #B37400;
+    --danger: #D32F2F;
+    --glow-color: rgba(8, 127, 122, 0.12);
+    --card-shadow: 0 4px 20px -2px rgba(16, 32, 39, 0.05);
   }
 
   html.dark {
-    --bg-primary: #05080D;
-    --bg-secondary: #080D14;
-    --bg-surface: #0B111A;
-    --bg-elevated: #0F1722;
-    --border-color: #182532;
-    --border-highlight: #35D6C7;
-    --primary: #35D6C7;
-    --primary-hover: #4fe2d4;
-    --primary-text: #05080D;
-    --secondary: #4DA3FF;
-    --text-main: #F4F7FA;
-    --text-secondary: #8B9AAA;
-    --text-muted: #5e6f80;
-    --warning: #F5B942;
-    --danger: #FF6678;
-    --grid-line: rgba(24, 37, 50, 0.35);
-    --card-shadow: none;
+    --bg-primary: #06111D;
+    --bg-secondary: #0B1A29;
+    --bg-surface: #102434;
+    --bg-elevated: #162F44;
+    --border-color: #1B3852;
+    --border-highlight: #43E6D1;
+    --primary: #43E6D1;
+    --primary-hover: #62ebd9;
+    --primary-text: #06111D;
+    --secondary: #5CA8FF;
+    --text-main: #F5FAFC;
+    --text-secondary: #8EA2B3;
+    --text-muted: #627A8E;
+    --warning: #FFB84D;
+    --danger: #FF6878;
+    --glow-color: rgba(67, 230, 209, 0.16);
+    --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.45);
   }
 
   body {
     background-color: var(--bg-primary);
     color: var(--text-main);
-    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     overflow-x: hidden;
-    transition: background-color 0.25s ease, color 0.25s ease;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
-  h1, h2, h3, .font-heading {
-    font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  h1, h2, h3, h4, .font-heading {
+    font-family: 'Space Grotesk', sans-serif;
+    letter-spacing: -0.02em;
+  }
+
+  code, pre, .font-mono {
+    font-family: 'IBM Plex Mono', monospace;
   }
 }
 
-/* Subtle Laboratory Grid Background */
-.lab-grid-bg {
-  background-image: 
-    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
-  background-size: 32px 32px;
+/* Atmospheric Product Environment */
+.product-atmosphere {
+  background: radial-gradient(circle at 50% 20%, rgba(90, 169, 255, 0.08) 0%, transparent 60%),
+              radial-gradient(circle at 80% 60%, rgba(66, 232, 209, 0.06) 0%, transparent 50%),
+              var(--bg-primary);
 }
 
-/* Precise scientific laboratory card */
-.lab-card {
+/* Premium Product Card / Vessel */
+.product-card {
   background-color: var(--bg-surface);
   border: 1px solid var(--border-color);
-  border-radius: 4px;
+  border-radius: 12px;
   box-shadow: var(--card-shadow);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.lab-card:hover {
+.product-card:hover {
   border-color: var(--primary);
+  box-shadow: 0 12px 36px -8px var(--glow-color);
 }
 
-.lab-card-active {
-  background-color: var(--bg-surface);
-  border: 1px solid var(--primary);
-  border-radius: 4px;
-}
-
-/* Scientific Controls & Buttons */
-.btn-lab-primary {
-  font-family: 'Space Grotesk', monospace;
+/* Cinematic Primary Button */
+.btn-primary-product {
+  font-family: 'Space Grotesk', sans-serif;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   background-color: var(--primary);
   color: var(--primary-text);
   border: 1px solid var(--primary);
-  border-radius: 3px;
-  padding: 0.6rem 1.25rem;
-  transition: all 0.15s ease-in-out;
+  border-radius: 8px;
+  padding: 0.75rem 1.6rem;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 16px var(--glow-color);
 }
 
-.btn-lab-primary:hover {
+.btn-primary-product:hover {
   background-color: var(--primary-hover);
-  box-shadow: 0 0 12px rgba(53, 214, 199, 0.25);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px var(--glow-color);
 }
 
-.btn-lab-secondary {
-  font-family: 'Space Grotesk', monospace;
+.btn-primary-product:active {
+  transform: translateY(1px);
+}
+
+/* Cinematic Secondary Button */
+.btn-secondary-product {
+  font-family: 'Space Grotesk', sans-serif;
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  background-color: transparent;
+  letter-spacing: 0.04em;
+  background-color: var(--bg-surface);
   color: var(--text-main);
   border: 1px solid var(--border-color);
-  border-radius: 3px;
-  padding: 0.6rem 1.25rem;
-  transition: all 0.15s ease-in-out;
+  border-radius: 8px;
+  padding: 0.75rem 1.6rem;
+  transition: all 0.2s ease;
 }
 
-.btn-lab-secondary:hover {
+.btn-secondary-product:hover {
   border-color: var(--primary);
   color: var(--primary);
-  background-color: var(--bg-elevated);
+  background-color: var(--bg-secondary);
 }
 
-/* OLED Screen Realism (Must stay dark hardware in all themes) */
-.oled-container {
-  background-color: #020408;
-  border: 1px solid #182532;
-  box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.95);
-  font-family: 'JetBrains Mono', monospace;
-  color: #35D6C7;
+/* Physical OLED Display Enclosure (ALWAYS PHYSICALLY DARK MATTE) */
+.oled-hardware-screen {
+  background-color: #030810;
+  border: 1px solid #14283C;
+  box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.95);
+  font-family: 'IBM Plex Mono', monospace;
+  color: #42E8D1;
   position: relative;
   overflow: hidden;
+  border-radius: 6px;
 }
 
-.oled-container::after {
+.oled-hardware-screen::after {
   content: " ";
   display: block;
   position: absolute;
   top: 0; left: 0; bottom: 0; right: 0;
-  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%);
   background-size: 100% 2px;
   pointer-events: none;
-  opacity: 0.5;
+  opacity: 0.4;
 }
 
-/* Custom scrollbars */
+/* Custom Scrollbars */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -155,7 +162,7 @@
 
 ::-webkit-scrollbar-thumb {
   background: var(--border-color);
-  border-radius: 2px;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {

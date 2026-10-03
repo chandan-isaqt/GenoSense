@@ -1,0 +1,83 @@
+{
+  "project": "GenoSense",
+  "version": "1.0.0",
+  "disclaimer": "All external photographic materials are attributed below in accordance with their respective Creative Commons or Unsplash licenses. No endorsement by the Raspberry Pi Foundation, Adafruit, Unsplash, or Wikimedia is implied.",
+  "assets": [
+    {
+      "asset": "public/assets/hardware/raspberry-pi.jpg",
+      "category": "hardware",
+      "component": "Raspberry Pi 4 Model B Single-Board Computer",
+      "source": "Wikimedia Commons",
+      "originalUrl": "https://commons.wikimedia.org/wiki/File:Raspberry_Pi_4_Model_B_-_Side.jpg",
+      "directUrl": "https://upload.wikimedia.org/wikipedia/commons/f/f1/Raspberry_Pi_4_Model_B_-_Side.jpg",
+      "author": "Michael Henzler",
+      "license": "Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)",
+      "notes": "Used exclusively as a reference for the internal computing core and hardware component breakdown. Distinguished from the custom GenoSense enclosure."
+    },
+    {
+      "asset": "public/assets/hardware/oled.jpg",
+      "category": "hardware",
+      "component": "0.96\" Monochrome I2C OLED Display Module (SSD1306)",
+      "source": "Wikimedia Commons",
+      "originalUrl": "https://commons.wikimedia.org/wiki/File:MicroSD_card_connected_to_Arduino_nano_with_OLED_display.jpg",
+      "directUrl": "https://upload.wikimedia.org/wikipedia/commons/5/50/MicroSD_card_connected_to_Arduino_nano_with_OLED_display.jpg",
+      "author": "Turbospok",
+      "license": "Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)",
+      "notes": "Physical reference for the 128x64 pixel monochrome screen mounted in the front bezel."
+    },
+    {
+      "asset": "public/assets/hardware/button.jpg",
+      "category": "hardware",
+      "component": "Tactile Momentary Push Button Switch",
+      "source": "Wikimedia Commons",
+      "originalUrl": "https://commons.wikimedia.org/wiki/File:Tactile_switches.jpg",
+      "directUrl": "https://upload.wikimedia.org/wikipedia/commons/1/11/Tactile_switches.jpg",
+      "author": "Wikimedia Commons contributor",
+      "license": "Creative Commons Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0)",
+      "notes": "Component reference for the physical GPIO hardware trigger on the enclosure."
+    },
+    {
+      "asset": "public/assets/hardware/device-reference.jpg",
+      "category": "hardware",
+      "component": "GenoSense Prototype Device Enclosure Concept",
+      "source": "GenoSense Industrial Design Laboratory",
+      "originalUrl": "Internal Prototype Concept",
+      "author": "GenoSense Project Team",
+      "license": "Project Educational & Demonstration License",
+      "notes": "Custom matte dark enclosure concept showcasing how the Raspberry Pi 4, I2C OLED, and tactile GPIO button assemble into a compact edge instrument."
+    },
+    {
+      "asset": "public/assets/biology/dna.jpg",
+      "category": "biology",
+      "component": "DNA Double Helix Molecular Context",
+      "source": "Unsplash",
+      "originalUrl": "https://unsplash.com/photos/94d3c16cda28",
+      "directUrl": "https://images.unsplash.com/photo-1530497610245-94d3c16cda28",
+      "author": "Warren Umoh",
+      "license": "Unsplash Free License (Commercial and non-commercial use permitted)",
+      "notes": "Subtle supporting context for DNA genomic sequence processing."
+    },
+    {
+      "asset": "public/assets/biology/laboratory.jpg",
+      "category": "biology",
+      "component": "Modern Biotechnology Laboratory Environment",
+      "source": "Unsplash",
+      "originalUrl": "https://unsplash.com/photos/01588f351e67",
+      "directUrl": "https://images.unsplash.com/photo-1579154204601-01588f351e67",
+      "author": "National Cancer Institute",
+      "license": "Unsplash Free License / Public Domain Context",
+      "notes": "Used as a low-opacity atmospheric background layer behind product sections."
+    },
+    {
+      "asset": "public/assets/biology/genomics.jpg",
+      "category": "biology",
+      "component": "Genomic Sequencing Instrumentation",
+      "source": "Unsplash",
+      "originalUrl": "https://unsplash.com/photos/abf9dbad1b69",
+      "directUrl": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69",
+      "author": "Louis Reed",
+      "license": "Unsplash Free License",
+      "notes": "Supporting context for genomic marker extraction and sequencing workflow."
+    }
+  ]
+}

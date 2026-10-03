@@ -11,10 +11,11 @@ export const TopNavbar: React.FC = () => {
   const location = useLocation();
 
   const navItems = [
-    { name: 'How It Works', sectionId: 'how-it-works' },
+    { name: 'Product', sectionId: 'hero' },
     { name: 'Device', sectionId: 'device' },
-    { name: 'AI Analysis', sectionId: 'analysis-result' },
-    { name: 'Demo', sectionId: 'full-demo' },
+    { name: 'How It Works', sectionId: 'how-it-works' },
+    { name: 'AI', sectionId: 'ai' },
+    { name: 'Demo', sectionId: 'demo' },
   ];
 
   const handleNavClick = (sectionId: string) => {
@@ -31,22 +32,22 @@ export const TopNavbar: React.FC = () => {
     }
   };
 
-  const handleTryGenoSense = () => {
+  const handleTryDemo = () => {
     setMobileMenuOpen(false);
     if (location.pathname !== '/') {
       navigate('/');
       setTimeout(() => {
-        const el = document.getElementById('full-demo');
+        const el = document.getElementById('demo');
         if (el) el.scrollIntoView({ behavior: 'smooth' });
       }, 100);
     } else {
-      const el = document.getElementById('full-demo');
+      const el = document.getElementById('demo');
       if (el) el.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-[var(--bg-primary)]/95 backdrop-blur-md border-b border-[var(--border-color)] transition-colors duration-200">
+    <header className="sticky top-0 z-40 w-full bg-[var(--bg-primary)]/85 backdrop-blur-xl border-b border-[var(--border-color)] transition-colors duration-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Brand Logo */}
         <NavLink
@@ -54,10 +55,10 @@ export const TopNavbar: React.FC = () => {
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           className="flex items-center gap-2.5 group cursor-pointer"
         >
-          <div className="w-8 h-8 rounded-[4px] bg-[var(--bg-surface)] border border-[var(--border-color)] group-hover:border-[var(--primary)] flex items-center justify-center transition-colors">
+          <div className="w-8 h-8 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-color)] group-hover:border-[var(--primary)] flex items-center justify-center transition-all duration-300 shadow-sm">
             <Dna className="w-4 h-4 text-[var(--primary)]" />
           </div>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-2">
             <span className="font-display font-bold text-lg tracking-wider text-[var(--text-main)]">
               GENOSENSE
             </span>
@@ -65,13 +66,13 @@ export const TopNavbar: React.FC = () => {
           </div>
         </NavLink>
 
-        {/* Center: Simple Navigation Items (4 items as requested) */}
-        <nav className="hidden md:flex items-center space-x-1 lg:space-x-4">
+        {/* Center: Clean Minimal Navigation Links */}
+        <nav className="hidden md:flex items-center space-x-1 lg:space-x-3">
           {navItems.map((item) => (
             <button
               key={item.name}
               onClick={() => handleNavClick(item.sectionId)}
-              className="px-3 py-1.5 text-xs font-mono uppercase tracking-wider text-[var(--text-secondary)] hover:text-[var(--text-main)] hover:bg-[var(--bg-surface)]/60 rounded-[3px] transition-colors cursor-pointer"
+              className="px-3.5 py-1.5 text-xs font-mono uppercase tracking-wider text-[var(--text-secondary)] hover:text-[var(--text-main)] hover:bg-[var(--bg-surface)]/60 rounded-md transition-all cursor-pointer"
             >
               {item.name}
             </button>
@@ -81,7 +82,7 @@ export const TopNavbar: React.FC = () => {
         {/* Right Actions: Theme Switcher + Single Primary CTA */}
         <div className="flex items-center gap-2.5 sm:gap-3">
           {predictionReady && (
-            <div className="hidden lg:flex items-center gap-2 px-2.5 py-1 rounded-[3px] bg-[var(--bg-surface)] border border-[var(--border-color)] text-xs font-mono">
+            <div className="hidden lg:flex items-center gap-2 px-2.5 py-1 rounded-md bg-[var(--bg-surface)] border border-[var(--border-color)] text-xs font-mono">
               <span className="text-[var(--text-secondary)]">RISK:</span>
               <span className="text-[var(--primary)] font-bold">{riskScore}%</span>
             </div>
@@ -89,7 +90,7 @@ export const TopNavbar: React.FC = () => {
 
           <button
             onClick={() => setReportModalOpen(true)}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono uppercase tracking-wider rounded-[3px] bg-[var(--bg-surface)] hover:bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:text-[var(--text-main)] border border-[var(--border-color)] transition-colors cursor-pointer"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono uppercase tracking-wider rounded-md bg-[var(--bg-surface)] hover:bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:text-[var(--text-main)] border border-[var(--border-color)] transition-colors cursor-pointer"
             title="Open Analysis Dossier"
           >
             <FileText className="w-3.5 h-3.5 text-[var(--primary)]" />
@@ -101,17 +102,17 @@ export const TopNavbar: React.FC = () => {
 
           {/* Primary CTA */}
           <button
-            onClick={handleTryGenoSense}
-            className="btn-lab-primary text-xs flex items-center gap-2 py-2 px-4 shadow-sm cursor-pointer"
+            onClick={handleTryDemo}
+            className="btn-primary-product text-xs flex items-center gap-2 py-2 px-4 shadow-sm cursor-pointer"
           >
             <Play className="w-3.5 h-3.5 fill-current" />
-            <span className="font-bold">TRY GENOSENSE</span>
+            <span className="font-bold">TRY DEMO</span>
           </button>
 
           {/* Mobile hamburger button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-1.5 rounded bg-[var(--bg-surface)] border border-[var(--border-color)] text-[var(--text-secondary)] hover:text-[var(--text-main)] cursor-pointer"
+            className="md:hidden p-1.5 rounded-md bg-[var(--bg-surface)] border border-[var(--border-color)] text-[var(--text-secondary)] hover:text-[var(--text-main)] cursor-pointer"
             aria-label="Toggle Navigation"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -142,11 +143,11 @@ export const TopNavbar: React.FC = () => {
               View Report Dossier
             </button>
             <button
-              onClick={handleTryGenoSense}
-              className="btn-lab-primary text-xs py-2.5 text-center flex items-center justify-center gap-1.5 cursor-pointer"
+              onClick={handleTryDemo}
+              className="btn-primary-product text-xs py-2.5 text-center flex items-center justify-center gap-1.5 cursor-pointer"
             >
               <Play className="w-3.5 h-3.5 fill-current" />
-              <span>TRY GENOSENSE</span>
+              <span>TRY DEMO</span>
             </button>
           </div>
         </div>

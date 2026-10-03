@@ -17,31 +17,31 @@ export interface ThemeColors {
 }
 
 export const DARK_THEME_COLORS: ThemeColors = {
-  background: '#05080D',
-  secondaryBg: '#080D14',
-  surface: '#0B111A',
-  elevatedSurface: '#0F1722',
-  border: '#182532',
-  primary: '#35D6C7',
-  secondary: '#4DA3FF',
-  text: '#F4F7FA',
-  textSecondary: '#8B9AAA',
-  warning: '#F5B942',
-  danger: '#FF6678',
+  background: '#06111D',
+  secondaryBg: '#0B1A29',
+  surface: '#102434',
+  elevatedSurface: '#162F44',
+  border: '#1B3852',
+  primary: '#43E6D1',
+  secondary: '#5CA8FF',
+  text: '#F5FAFC',
+  textSecondary: '#8EA2B3',
+  warning: '#FFB84D',
+  danger: '#FF6878',
 };
 
 export const LIGHT_THEME_COLORS: ThemeColors = {
-  background: '#F4F8FA',
-  secondaryBg: '#EAF1F4',
+  background: '#F4F8F9',
+  secondaryBg: '#E8F0F2',
   surface: '#FFFFFF',
   elevatedSurface: '#F8FBFC',
-  border: '#D7E2E7',
+  border: '#D3E0E8',
   primary: '#087F7A',
   secondary: '#1769AA',
   text: '#102027',
-  textSecondary: '#52656D',
-  warning: '#A56A00',
-  danger: '#C63D4F',
+  textSecondary: '#556877',
+  warning: '#B37400',
+  danger: '#D32F2F',
 };
 
 interface ThemeContextType {

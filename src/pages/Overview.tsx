@@ -1,14 +1,16 @@
 import React from 'react';
-import { HeroProductIntro } from '../components/presentation/HeroProductIntro';
-import { ProblemSection } from '../components/presentation/ProblemSection';
-import { MeetTheDeviceSection } from '../components/presentation/MeetTheDeviceSection';
-import { ButtonFlowSection } from '../components/presentation/ButtonFlowSection';
-import { LiveDeviceSimulation } from '../components/presentation/LiveDeviceSimulation';
-import { SimpleHowItWorks } from '../components/presentation/SimpleHowItWorks';
-import { WebDashboardResultSection } from '../components/presentation/WebDashboardResultSection';
-import { ResultExplanationSection } from '../components/presentation/ResultExplanationSection';
-import { TechnicalArchitectureSection } from '../components/presentation/TechnicalArchitectureSection';
-import { FullSystemDemoSection } from '../components/presentation/FullSystemDemoSection';
+import { CinematicDeviceHero } from '../components/futuristic/CinematicDeviceHero';
+import { WhatIsGenoSenseSection } from '../components/futuristic/WhatIsGenoSenseSection';
+import { DeviceStorySection } from '../components/futuristic/DeviceStorySection';
+import { RealHardwareReferenceSection } from '../components/futuristic/RealHardwareReferenceSection';
+import { DeviceInternalViewSection } from '../components/futuristic/DeviceInternalViewSection';
+import { InteractiveButtonExperience } from '../components/futuristic/InteractiveButtonExperience';
+import { TheSimpleStorySequence } from '../components/futuristic/TheSimpleStorySequence';
+import { InsideIntelligenceSection } from '../components/futuristic/InsideIntelligenceSection';
+import { ShapExplanationSection } from '../components/futuristic/ShapExplanationSection';
+import { WebDeviceSyncSection } from '../components/futuristic/WebDeviceSyncSection';
+import { FuturisticLiveDemoArea } from '../components/futuristic/FuturisticLiveDemoArea';
+import { TechnicalModeSection } from '../components/futuristic/TechnicalModeSection';
 import { ResearchDisclaimerSection } from '../components/presentation/ResearchDisclaimerSection';
 import { FirstTimeUserGuideModal } from '../components/presentation/FirstTimeUserGuideModal';
 
@@ -21,46 +23,52 @@ export const Overview: React.FC = () => {
   };
 
   return (
-    <div className="space-y-16 animate-fadeIn pb-12">
-      {/* 01: What is GenoSense? (Cinematic Product Introduction) */}
-      <HeroProductIntro
+    <div className="space-y-16 animate-fadeIn pb-16">
+      {/* 01: Hero Product Introduction */}
+      <CinematicDeviceHero
+        onExperienceDemo={() => scrollToSection('demo')}
         onExploreHowItWorks={() => scrollToSection('how-it-works')}
-        onTryGenoSense={() => scrollToSection('full-demo')}
       />
 
-      {/* 02: What problem does it address? (The Challenge in Modern Genomics) */}
-      <ProblemSection />
+      {/* 02: What is GenoSense? (DNA -> GENOSENSE -> AI -> DEVICE -> WEB) */}
+      <WhatIsGenoSenseSection />
 
-      {/* 03: Meet the device (Meet the GenoSense Edge Device & Component Cards) */}
-      <MeetTheDeviceSection />
+      {/* 03: What does the device look like? (Enclosure Showcase + WHAT YOU SEE pointers) */}
+      <DeviceStorySection />
 
-      {/* 04: What happens when the button is pressed? (6-Stage Interactive Sequence) */}
-      <ButtonFlowSection />
+      {/* 04: What does each part do? (Built with real components: RPi 4 + OLED + Button + Enclosure) */}
+      <RealHardwareReferenceSection />
 
-      {/* 05: Try the device (Live Device Simulation & Synchronized Split-Screen) */}
-      <LiveDeviceSimulation />
+      {/* 05: What is inside? (Interactive Cutaway: OLED -> RPi -> GPIO -> Button -> Wi-Fi) */}
+      <DeviceInternalViewSection />
 
-      {/* 06: How the AI pipeline works (Simple 5-Step Story) */}
-      <SimpleHowItWorks />
+      {/* 06: What happens when I press analyze? (Press Analyze. Watch what happens. 7 stages) */}
+      <InteractiveButtonExperience />
 
-      {/* 07: Analysis result (Web Dashboard Result Experience: 73% HIGH + Features) */}
-      <WebDashboardResultSection />
+      {/* 07: How does the data reach the AI? (6-Chapter Simple Story Sequence) */}
+      <TheSimpleStorySequence />
 
-      {/* 08: Why the model produced the result (Plain-Language Explanation & Progressive Disclosure) */}
-      <ResultExplanationSection />
+      {/* 08: How does AI produce the model output? (200 Trees Convergence -> 73% Output) */}
+      <InsideIntelligenceSection />
 
-      {/* 09: Technical architecture (Under the Hood - Optional Expandable Details) */}
-      <TechnicalArchitectureSection />
+      {/* 09: How does SHAP explain it? (Why did the model produce this output?) */}
+      <ShapExplanationSection />
 
-      {/* 10: Full system demo (See GenoSense in Action - Step-by-Step Guided Demo) */}
-      <FullSystemDemoSection />
+      {/* 10: How does the result reach the device & web? (One result. Two interfaces. SYNCED) */}
+      <WebDeviceSyncSection />
 
-      {/* 11: Limitations / research disclaimer (Research Prototype Disclaimer) */}
+      {/* 11: Try the live demo (Now, try GenoSense yourself) */}
+      <FuturisticLiveDemoArea onSeeWhy={() => scrollToSection('shap')} />
+
+      {/* 12: Technical Architecture (Expandable Complete Pipeline View) */}
+      <TechnicalModeSection />
+
+      {/* 13: Limitations & Research Disclaimer */}
       <ResearchDisclaimerSection />
 
-      {/* First-Time User Guide Floating Control & Modal */}
+      {/* Floating Interactive Help Modal */}
       <FirstTimeUserGuideModal
-        onStartDemo={() => scrollToSection('full-demo')}
+        onStartDemo={() => scrollToSection('demo')}
       />
     </div>
   );

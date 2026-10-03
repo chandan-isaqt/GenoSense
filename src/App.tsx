@@ -10,6 +10,8 @@ import { Explainability } from './pages/Explainability';
 import { Hardware } from './pages/Hardware';
 import { Architecture } from './pages/Architecture';
 import { DemoGuide } from './pages/DemoGuide';
+import { LiveDemoPage } from './pages/LiveDemoPage';
+import { PresentationModePage } from './pages/PresentationModePage';
 
 export const App: React.FC = () => {
   return (
@@ -19,6 +21,8 @@ export const App: React.FC = () => {
           <Routes>
             <Route path="/" element={<Layout />}>
               <Route index element={<Overview />} />
+              <Route path="demo" element={<LiveDemoPage />} />
+              <Route path="presentation" element={<PresentationModePage />} />
               <Route path="genomic-analysis" element={<GenomicAnalysis />} />
               <Route path="ai-prediction" element={<AIPrediction />} />
               <Route path="explainability" element={<Explainability />} />
