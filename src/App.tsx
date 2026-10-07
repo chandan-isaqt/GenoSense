@@ -3,15 +3,14 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import { GenoSenseProvider } from './context/GenoSenseContext';
 import { Layout } from './components/layout/Layout';
-import { Overview } from './pages/Overview';
-import { GenomicAnalysis } from './pages/GenomicAnalysis';
-import { AIPrediction } from './pages/AIPrediction';
-import { Explainability } from './pages/Explainability';
-import { Hardware } from './pages/Hardware';
-import { Architecture } from './pages/Architecture';
-import { DemoGuide } from './pages/DemoGuide';
-import { LiveDemoPage } from './pages/LiveDemoPage';
-import { PresentationModePage } from './pages/PresentationModePage';
+import { Home } from './pages/Home';
+import { Analyze } from './pages/Analyze';
+import { Results } from './pages/Results';
+import { Device } from './pages/Device';
+import { HowItWorks } from './pages/HowItWorks';
+import { Technical } from './pages/Technical';
+import { Report } from './pages/Report';
+import { DemoMode } from './pages/DemoMode';
 
 export const App: React.FC = () => {
   return (
@@ -20,15 +19,14 @@ export const App: React.FC = () => {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Layout />}>
-              <Route index element={<Overview />} />
-              <Route path="demo" element={<LiveDemoPage />} />
-              <Route path="presentation" element={<PresentationModePage />} />
-              <Route path="genomic-analysis" element={<GenomicAnalysis />} />
-              <Route path="ai-prediction" element={<AIPrediction />} />
-              <Route path="explainability" element={<Explainability />} />
-              <Route path="hardware" element={<Hardware />} />
-              <Route path="architecture" element={<Architecture />} />
-              <Route path="demo-guide" element={<DemoGuide />} />
+              <Route index element={<Home />} />
+              <Route path="analyze" element={<Analyze />} />
+              <Route path="results" element={<Results />} />
+              <Route path="device" element={<Device />} />
+              <Route path="how-it-works" element={<HowItWorks />} />
+              <Route path="technical" element={<Technical />} />
+              <Route path="report" element={<Report />} />
+              <Route path="demo" element={<DemoMode />} />
               {/* Fallback */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Route>

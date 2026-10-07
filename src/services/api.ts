@@ -1,132 +1,56 @@
 import {
-  DEMO_SAMPLE_ID,
-  TOTAL_MARKERS,
-  TOTAL_VARIANTS,
-  TOTAL_FEATURES,
-  RANDOM_FOREST_TREES,
-  DEMO_RISK_SCORE,
-  DEMO_RISK_LEVEL,
-  DEMO_PROCESSING_TIME,
-  DEMO_GENETIC_MARKERS,
-  DEMO_DISEASE_SCORES,
-  DEMO_SHAP_ATTRIBUTIONS,
-} from '../data/demoData';
-import { GeneticMarker, DiseaseScore, ShapAttribution } from '../types';
+  AnalysisResult,
+  MarkerRecord,
+  SampleProfile,
+  ValidationResult,
+} from '../types/genomics';
+import { DEMO_MARKER_CATALOG } from '../data/demoMarkers';
+import { DEMO_SAMPLE_PROFILE } from '../data/demoVariants';
+import {
+  executeSampleAnalysis,
+  validateAndParseVariantFile,
+} from './analysisService';
+import { buildReportDocument, GenoSenseReportDocument } from './reportService';
 
-export const API_BASE_URL = 'http://localhost:5000/api/v1';
+/**
+ * Phase-1 API Abstraction Layer
+ * Currently executes local deterministic matching functions.
+ * Designed to be replaced transparently in Phase 5 with:
+ * - POST /analyze
+ * - POST /predict
+ * - GET /markers
+ * - GET /report/:id
+ */
 
-export interface HealthCheckResponse {
-  status: 'ok' | 'degraded' | 'error';
-  timestamp: string;
-  version: string;
-  model: {
-    name: string;
-    trees: number;
-    features: number;
-    status: string;
-  };
-  hardware: {
-    edge_device: string;
-    display: string;
-    i2c_bus: number;
-    connection: string;
-  };
+let lastStoredResult: AnalysisResult | null = null;
+
+export async function analyzeDemo(
+  profile: SampleProfile = DEMO_SAMPLE_PROFILE
+): Promise<AnalysisResult> {
+  const result = executeSampleAnalysis(profile);
+  lastStoredResult = result;
+  return result;
 }
 
-export interface DemoSampleResponse {
-  sampleId: string;
-  totalMarkers: number;
-  totalVariants: number;
-  totalFeatures: number;
-  markers: GeneticMarker[];
+export async function uploadVariants(
+  fileName: string,
+  fileContent: string
+): Promise<ValidationResult> {
+  return validateAndParseVariantFile(fileName, fileContent);
 }
 
-export interface PredictionResponse {
-  sampleId: string;
-  riskScore: number;
-  riskLevel: 'LOW' | 'MODERATE' | 'HIGH';
-  processingTimeMs: number;
-  randomForestTrees: number;
-  diseaseScores: DiseaseScore[];
-  topFeatures: string[];
+export async function getMarkers(): Promise<MarkerRecord[]> {
+  return DEMO_MARKER_CATALOG;
 }
 
-export interface ShapResponse {
-  sampleId: string;
-  attributions: ShapAttribution[];
-  baseValue: number;
+export async function getResult(): Promise<AnalysisResult | null> {
+  return lastStoredResult;
 }
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-export const apiService = {
-  async healthCheck(): Promise<HealthCheckResponse> {
-    await delay(350);
-    return {
-      status: 'ok',
-      timestamp: new Date().toISOString(),
-      version: '1.2.0-rc',
-      model: {
-        name: 'RandomForestClassifier',
-        trees: RANDOM_FOREST_TREES,
-        features: TOTAL_FEATURES,
-        status: 'READY',
-      },
-      hardware: {
-        edge_device: 'Raspberry Pi 4 Model B (4GB)',
-        display: 'SSD1306 128x64 OLED via I2C',
-        i2c_bus: 1,
-        connection: 'ONLINE (Wi-Fi 802.11ac)',
-      },
-    };
-  },
-
-  async getDemoSample(): Promise<DemoSampleResponse> {
-    await delay(500);
-    return {
-      sampleId: DEMO_SAMPLE_ID,
-      totalMarkers: TOTAL_MARKERS,
-      totalVariants: TOTAL_VARIANTS,
-      totalFeatures: TOTAL_FEATURES,
-      markers: DEMO_GENETIC_MARKERS,
-    };
-  },
-
-  async extractMarkers(_vcfSnippet?: string): Promise<{ markers: GeneticMarker[]; count: number }> {
-    await delay(700);
-    return {
-      markers: DEMO_GENETIC_MARKERS,
-      count: DEMO_GENETIC_MARKERS.length,
-    };
-  },
-
-  async predict(_features?: number[]): Promise<PredictionResponse> {
-    await delay(800);
-    return {
-      sampleId: DEMO_SAMPLE_ID,
-      riskScore: DEMO_RISK_SCORE,
-      riskLevel: DEMO_RISK_LEVEL,
-      processingTimeMs: DEMO_PROCESSING_TIME,
-      randomForestTrees: RANDOM_FOREST_TREES,
-      diseaseScores: DEMO_DISEASE_SCORES,
-      topFeatures: ['GENE-A', 'GENE-B', 'GENE-D'],
-    };
-  },
-
-  async explainShap(): Promise<ShapResponse> {
-    await delay(600);
-    return {
-      sampleId: DEMO_SAMPLE_ID,
-      attributions: DEMO_SHAP_ATTRIBUTIONS,
-      baseValue: 0.22,
-    };
-  },
-
-  async pushToOled(_lines: string[]): Promise<{ status: string; i2cAck: boolean }> {
-    await delay(450);
-    return {
-      status: 'RENDER_SUCCESS',
-      i2cAck: true,
-    };
-  },
-};
+export async function generateReport(
+  result?: AnalysisResult
+): Promise<GenoSenseReportDocument | null> {
+  const target = result || lastStoredResult;
+  if (!target) return null;
+  return buildReportDocument(target);
+}

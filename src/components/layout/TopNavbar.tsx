@@ -1,153 +1,146 @@
 import React, { useState } from 'react';
-import { NavLink, useNavigate, useLocation } from 'react-router-dom';
-import { Dna, Menu, X, Play, FileText } from 'lucide-react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { Dna, Menu, X, Play, RotateCcw } from 'lucide-react';
 import { useGenoSenseDemo } from '../../hooks/useGenoSenseDemo';
 import { ThemeToggle } from './ThemeToggle';
 
 export const TopNavbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { setReportModalOpen, predictionReady, riskScore } = useGenoSenseDemo();
+  const { loadedSample, analysisResult, resetDemo } = useGenoSenseDemo();
   const navigate = useNavigate();
-  const location = useLocation();
 
   const navItems = [
-    { name: 'Product', sectionId: 'hero' },
-    { name: 'Device', sectionId: 'device' },
-    { name: 'How It Works', sectionId: 'how-it-works' },
-    { name: 'AI', sectionId: 'ai' },
-    { name: 'Demo', sectionId: 'demo' },
+    { name: 'Home', path: '/' },
+    { name: 'Analyze', path: '/analyze' },
+    { name: 'Results', path: '/results' },
+    { name: 'Device', path: '/device' },
+    { name: 'How It Works', path: '/how-it-works' },
+    { name: 'Technical', path: '/technical' },
   ];
 
-  const handleNavClick = (sectionId: string) => {
+  const handleStartDemo = () => {
     setMobileMenuOpen(false);
-    if (location.pathname !== '/') {
-      navigate('/');
-      setTimeout(() => {
-        const el = document.getElementById(sectionId);
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
-    } else {
-      const el = document.getElementById(sectionId);
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
-    }
+    navigate('/analyze');
   };
 
-  const handleTryDemo = () => {
+  const handleReset = () => {
+    resetDemo();
     setMobileMenuOpen(false);
-    if (location.pathname !== '/') {
-      navigate('/');
-      setTimeout(() => {
-        const el = document.getElementById('demo');
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
-    } else {
-      const el = document.getElementById('demo');
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
-    }
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-[var(--bg-primary)]/85 backdrop-blur-xl border-b border-[var(--border-color)] transition-colors duration-200">
+    <header className="sticky top-0 z-40 w-full bg-[var(--bg-primary)]/90 backdrop-blur-xl border-b border-[var(--border-color)] transition-colors duration-200 print:hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Brand Logo */}
         <NavLink
           to="/"
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           className="flex items-center gap-2.5 group cursor-pointer"
         >
-          <div className="w-8 h-8 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-color)] group-hover:border-[var(--primary)] flex items-center justify-center transition-all duration-300 shadow-sm">
+          <div className="w-8 h-8 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-color)] group-hover:border-[var(--primary)] flex items-center justify-center transition-colors">
             <Dna className="w-4 h-4 text-[var(--primary)]" />
           </div>
-          <div className="flex items-center gap-2">
-            <span className="font-display font-bold text-lg tracking-wider text-[var(--text-main)]">
+          <div className="flex flex-col text-left">
+            <span className="font-display font-bold text-base tracking-wider text-[var(--text-main)] leading-none">
               GENOSENSE
             </span>
-            <span className="w-1.5 h-1.5 rounded-full bg-[var(--primary)] shadow-[0_0_8px_var(--primary)] animate-pulse" />
+            <span className="text-[9px] font-mono text-[var(--text-secondary)] tracking-wider">
+              VARIANT PROTOTYPE
+            </span>
           </div>
         </NavLink>
 
-        {/* Center: Clean Minimal Navigation Links */}
-        <nav className="hidden md:flex items-center space-x-1 lg:space-x-3">
+        {/* Minimal Navigation Links */}
+        <nav className="hidden md:flex items-center space-x-1 lg:space-x-2" aria-label="Main Navigation">
           {navItems.map((item) => (
-            <button
-              key={item.name}
-              onClick={() => handleNavClick(item.sectionId)}
-              className="px-3.5 py-1.5 text-xs font-mono uppercase tracking-wider text-[var(--text-secondary)] hover:text-[var(--text-main)] hover:bg-[var(--bg-surface)]/60 rounded-md transition-all cursor-pointer"
+            <NavLink
+              key={item.path}
+              to={item.path}
+              end={item.path === '/'}
+              className={({ isActive }) =>
+                `px-3 py-1.5 text-xs font-mono uppercase tracking-wider rounded-md transition-colors ${
+                  isActive
+                    ? 'text-[var(--primary)] bg-[var(--bg-surface)] font-bold border border-[var(--border-color)]'
+                    : 'text-[var(--text-secondary)] hover:text-[var(--text-main)] hover:bg-[var(--bg-surface)]/50'
+                }`
+              }
             >
               {item.name}
-            </button>
+            </NavLink>
           ))}
         </nav>
 
-        {/* Right Actions: Theme Switcher + Single Primary CTA */}
-        <div className="flex items-center gap-2.5 sm:gap-3">
-          {predictionReady && (
-            <div className="hidden lg:flex items-center gap-2 px-2.5 py-1 rounded-md bg-[var(--bg-surface)] border border-[var(--border-color)] text-xs font-mono">
-              <span className="text-[var(--text-secondary)]">RISK:</span>
-              <span className="text-[var(--primary)] font-bold">{riskScore}%</span>
-            </div>
+        {/* Right Actions: Reset + Light/Dark + START DEMO */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          {(loadedSample || analysisResult) && (
+            <button
+              type="button"
+              onClick={handleReset}
+              className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-mono text-[var(--text-secondary)] hover:text-[var(--text-main)] bg-[var(--bg-surface)] border border-[var(--border-color)] transition-colors cursor-pointer"
+              title="Clear analysis state and return to SYSTEM READY"
+            >
+              <RotateCcw className="w-3.5 h-3.5 text-[var(--primary)]" />
+              <span>RESET DEMO</span>
+            </button>
           )}
 
-          <button
-            onClick={() => setReportModalOpen(true)}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono uppercase tracking-wider rounded-md bg-[var(--bg-surface)] hover:bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:text-[var(--text-main)] border border-[var(--border-color)] transition-colors cursor-pointer"
-            title="Open Analysis Dossier"
-          >
-            <FileText className="w-3.5 h-3.5 text-[var(--primary)]" />
-            <span>REPORT</span>
-          </button>
-
-          {/* Theme Switcher */}
           <ThemeToggle />
 
-          {/* Primary CTA */}
           <button
-            onClick={handleTryDemo}
-            className="btn-primary-product text-xs flex items-center gap-2 py-2 px-4 shadow-sm cursor-pointer"
+            type="button"
+            onClick={handleStartDemo}
+            className="btn-primary-product text-xs flex items-center gap-1.5 py-2 px-4 cursor-pointer"
           >
             <Play className="w-3.5 h-3.5 fill-current" />
-            <span className="font-bold">TRY DEMO</span>
+            <span className="font-bold">START DEMO</span>
           </button>
 
-          {/* Mobile hamburger button */}
           <button
+            type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="md:hidden p-1.5 rounded-md bg-[var(--bg-surface)] border border-[var(--border-color)] text-[var(--text-secondary)] hover:text-[var(--text-main)] cursor-pointer"
-            aria-label="Toggle Navigation"
+            aria-label="Toggle Navigation Menu"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Navigation Drawer */}
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-[var(--border-color)] bg-[var(--bg-secondary)] px-4 py-3 space-y-2">
           {navItems.map((item) => (
-            <button
-              key={item.name}
-              onClick={() => handleNavClick(item.sectionId)}
-              className="w-full text-left px-3 py-2 text-xs font-mono uppercase tracking-wider text-[var(--text-secondary)] hover:text-[var(--text-main)] hover:bg-[var(--bg-surface)] rounded-[3px] transition-colors cursor-pointer"
+            <NavLink
+              key={item.path}
+              to={item.path}
+              end={item.path === '/'}
+              onClick={() => setMobileMenuOpen(false)}
+              className={({ isActive }) =>
+                `block w-full text-left px-3 py-2 text-xs font-mono uppercase tracking-wider rounded-md ${
+                  isActive
+                    ? 'text-[var(--primary)] bg-[var(--bg-surface)] font-bold'
+                    : 'text-[var(--text-secondary)] hover:text-[var(--text-main)]'
+                }`
+              }
             >
               {item.name}
-            </button>
+            </NavLink>
           ))}
           <div className="pt-2 border-t border-[var(--border-color)] flex flex-col gap-2">
             <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                setReportModalOpen(true);
-              }}
-              className="btn-lab-secondary text-xs py-2 text-center"
+              type="button"
+              onClick={handleReset}
+              className="btn-secondary-product text-xs py-2 flex items-center justify-center gap-1.5 cursor-pointer"
             >
-              View Report Dossier
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>RESET DEMO</span>
             </button>
             <button
-              onClick={handleTryDemo}
-              className="btn-primary-product text-xs py-2.5 text-center flex items-center justify-center gap-1.5 cursor-pointer"
+              type="button"
+              onClick={handleStartDemo}
+              className="btn-primary-product text-xs py-2.5 flex items-center justify-center gap-1.5 cursor-pointer"
             >
               <Play className="w-3.5 h-3.5 fill-current" />
-              <span>TRY DEMO</span>
+              <span>START DEMO</span>
             </button>
           </div>
         </div>
