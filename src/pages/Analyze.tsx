@@ -1,17 +1,15 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Play,
-  Upload,
-  FileSpreadsheet,
   CheckCircle2,
-  AlertTriangle,
   Loader2,
   Eye,
   Download,
   RotateCcw,
   ArrowRight,
   Dna,
+  Cpu,
 } from 'lucide-react';
 import { useGenoSenseDemo } from '../hooks/useGenoSenseDemo';
 import { ORDERED_ANALYSIS_STAGES } from '../context/GenoSenseContext';
@@ -21,23 +19,17 @@ export const Analyze: React.FC = () => {
   const {
     loadedSample,
     sampleLoadedMessage,
-    validationErrors,
-    validationWarnings,
     isAnalyzing,
     analysisStage,
     completedStages,
     progressStep,
     analysisResult,
     loadDemoSample,
-    handleFileUpload,
     runSampleAnalysis,
     resetDemo,
   } = useGenoSenseDemo();
 
   const [showCsvFormat, setShowCsvFormat] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
-  const csvInputRef = useRef<HTMLInputElement | null>(null);
-  const vcfInputRef = useRef<HTMLInputElement | null>(null);
   const navigate = useNavigate();
 
   const progressSteps = [
@@ -48,20 +40,6 @@ export const Analyze: React.FC = () => {
     { num: 5, code: '05 RESULT' },
   ];
 
-  const onFileSelected = async (file: File) => {
-    const text = await file.text();
-    await handleFileUpload(file.name, text);
-  };
-
-  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const file = e.dataTransfer.files?.[0];
-    if (file) {
-      await onFileSelected(file);
-    }
-  };
-
   const handleDownloadDemoCsv = () => {
     const blob = new Blob([DEMO_CSV_CONTENT], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -69,14 +47,17 @@ export const Analyze: React.FC = () => {
     link.href = url;
     link.download = 'GS-DEMO-001.csv';
     link.click();
+    document.body.removeChild(link);
     URL.revokeObjectURL(url);
   };
 
+  const handleUseDemoSample = async () => {
+    loadDemoSample();
+    await runSampleAnalysis(DEMO_SAMPLE_PROFILE);
+  };
+
   const handleAnalyzeClick = async () => {
-    const res = await runSampleAnalysis();
-    if (res) {
-      // Remain visible so user sees all checkmarks, or let them click View Results
-    }
+    await runSampleAnalysis(DEMO_SAMPLE_PROFILE);
   };
 
   return (
@@ -174,7 +155,7 @@ GS-DEMO-001,GENE-E,VAR-005,T,0`}
 
       {/* Main Split Grid: Input Selection (Left) & Execution Pipeline (Right) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left Column: Demo Sample Card + File Upload */}
+        {/* Left Column: Demo Sample Card + Overview Details */}
         <div className="lg:col-span-6 space-y-6">
           {/* Deterministic Demo Sample Card */}
           <div className="product-card p-6 space-y-5">
@@ -224,121 +205,57 @@ GS-DEMO-001,GENE-E,VAR-005,T,0`}
               </span>
             </div>
 
-            <div className="flex flex-wrap items-center gap-3 pt-1">
+            <div className="pt-1">
               <button
                 type="button"
-                onClick={loadDemoSample}
+                onClick={handleUseDemoSample}
                 disabled={isAnalyzing}
                 className="btn-primary-product text-xs py-2.5 px-5 flex items-center gap-2 cursor-pointer disabled:opacity-50"
               >
-                <CheckCircle2 className="w-4 h-4" />
-                <span>USE DEMO SAMPLE</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => csvInputRef.current?.click()}
-                disabled={isAnalyzing}
-                className="btn-secondary-product text-xs py-2.5 px-4 flex items-center gap-2 cursor-pointer disabled:opacity-50"
-              >
-                <FileSpreadsheet className="w-4 h-4" />
-                <span>UPLOAD CSV</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => vcfInputRef.current?.click()}
-                disabled={isAnalyzing}
-                className="px-3.5 py-2.5 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-elevated)] border border-[var(--border-color)] text-xs font-mono text-[var(--text-secondary)] hover:text-[var(--text-main)] cursor-pointer disabled:opacity-50"
-              >
-                UPLOAD VCF
+                {isAnalyzing ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>ANALYZING DEMO...</span>
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span>USE DEMO SAMPLE</span>
+                  </>
+                )}
               </button>
             </div>
           </div>
 
-          {/* Drag & Drop File Upload Zone */}
-          <div
-            onDragOver={(e) => {
-              e.preventDefault();
-              setIsDragging(true);
-            }}
-            onDragLeave={() => setIsDragging(false)}
-            onDrop={handleDrop}
-            onClick={() => csvInputRef.current?.click()}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                csvInputRef.current?.click();
-              }
-            }}
-            aria-label="Drop CSV or VCF file here or click to choose file"
-            className={`p-8 rounded-2xl border-2 border-dashed transition-all text-center space-y-3 cursor-pointer ${
-              isDragging
-                ? 'border-[var(--primary)] bg-[var(--primary)]/10'
-                : 'border-[var(--border-color)] bg-[var(--bg-surface)]/60 hover:border-[var(--primary)]/60'
-            }`}
-          >
-            <input
-              ref={csvInputRef}
-              type="file"
-              accept=".csv"
-              className="hidden"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) onFileSelected(file);
-                e.target.value = '';
-              }}
-            />
-            <input
-              ref={vcfInputRef}
-              type="file"
-              accept=".vcf"
-              className="hidden"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) onFileSelected(file);
-                e.target.value = '';
-              }}
-            />
-
-            <div className="w-12 h-12 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)] flex items-center justify-center mx-auto text-[var(--primary)]">
-              <Upload className="w-6 h-6" />
+          {/* Deterministic Demonstration Details Card */}
+          <div className="product-card p-6 space-y-4">
+            <div className="flex items-center gap-2 border-b border-[var(--border-color)] pb-3">
+              <Cpu className="w-4 h-4 text-[var(--primary)]" />
+              <h3 className="text-base font-display font-bold text-[var(--text-main)]">
+                Deterministic Prototype Pipeline
+              </h3>
             </div>
-            <div className="space-y-1">
-              <p className="text-sm font-display font-bold text-[var(--text-main)] uppercase tracking-wider">
-                DROP FILE HERE OR CHOOSE FILE
-              </p>
-              <p className="text-xs text-[var(--text-secondary)] font-mono">
-                Supports .csv (sample_id,gene,variant,allele,genotype) or prototype .vcf
-              </p>
-            </div>
-          </div>
 
-          {/* Validation Errors */}
-          {validationErrors.length > 0 && (
-            <div
-              role="alert"
-              className="p-4 rounded-xl bg-[var(--danger)]/10 border border-[var(--danger)] text-xs font-mono space-y-2"
-            >
-              <div className="flex items-center gap-2 font-bold text-[var(--danger)]">
-                <AlertTriangle className="w-4 h-4" />
-                <span>FILE VALIDATION FAILED</span>
+            <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
+              GenoSense operates in deterministic demonstration mode. Clicking{' '}
+              <strong className="text-[var(--primary)] font-mono">USE DEMO SAMPLE</strong> executes the end-to-end variant normalization, cross-references the 13-record synthetic marker catalog, calculates weighted profile scores, and syncs with the simulated OLED hardware.
+            </p>
+
+            <div className="space-y-2.5 pt-1 text-xs font-mono">
+              <div className="flex items-center justify-between p-2.5 rounded-lg bg-[var(--bg-secondary)] border border-[var(--border-color)]">
+                <span className="text-[var(--text-secondary)]">Target Conditions:</span>
+                <span className="text-[var(--text-main)] font-semibold">Allergy, Dengue, Typhoid</span>
               </div>
-              <ul className="list-disc list-inside space-y-1 text-[var(--text-main)]">
-                {validationErrors.map((err, i) => (
-                  <li key={i}>{err}</li>
-                ))}
-              </ul>
+              <div className="flex items-center justify-between p-2.5 rounded-lg bg-[var(--bg-secondary)] border border-[var(--border-color)]">
+                <span className="text-[var(--text-secondary)]">Curated Markers:</span>
+                <span className="text-[var(--primary)] font-semibold">13 Synthetic Records</span>
+              </div>
+              <div className="flex items-center justify-between p-2.5 rounded-lg bg-[var(--bg-secondary)] border border-[var(--border-color)]">
+                <span className="text-[var(--text-secondary)]">Scoring Engine:</span>
+                <span className="text-[var(--text-main)] font-semibold">Weighted Match (0–100)</span>
+              </div>
             </div>
-          )}
-
-          {/* Validation Warnings */}
-          {validationWarnings.length > 0 && (
-            <div className="p-3.5 rounded-xl bg-[var(--warning)]/10 border border-[var(--warning)] text-xs font-mono text-[var(--warning)]">
-              {validationWarnings.join(' ')}
-            </div>
-          )}
+          </div>
 
           {/* Sample Loaded Confirmation Banner */}
           {sampleLoadedMessage && (
@@ -369,7 +286,7 @@ GS-DEMO-001,GENE-E,VAR-005,T,0`}
                 ) : (
                   <>
                     <Play className="w-4 h-4 fill-current" />
-                    <span>ANALYZE SAMPLE</span>
+                    <span>{analysisResult ? 'RE-ANALYZE SAMPLE' : 'ANALYZE SAMPLE'}</span>
                   </>
                 )}
               </button>
@@ -424,22 +341,6 @@ GS-DEMO-001,GENE-E,VAR-005,T,0`}
                 );
               })}
             </div>
-
-            {/* No Marker Matches Warning if user uploaded valid CSV with 0 catalog hits */}
-            {analysisResult && analysisResult.matchedMarkers.length === 0 && (
-              <div className="p-4 rounded-xl bg-[var(--warning)]/10 border border-[var(--warning)] text-xs font-mono text-[var(--text-main)] space-y-2">
-                <p className="font-bold text-[var(--warning)]">
-                  No matching demo markers were found in this file. Try the provided demo sample.
-                </p>
-                <button
-                  type="button"
-                  onClick={loadDemoSample}
-                  className="btn-primary-product text-xs py-1.5 px-3 cursor-pointer"
-                >
-                  Load GS-DEMO-001 Sample
-                </button>
-              </div>
-            )}
 
             {/* Completion Callout & Navigation to Results */}
             {analysisResult && (
