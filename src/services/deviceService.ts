@@ -4,47 +4,52 @@ export const DEVICE_HOTSPOTS: DeviceHotspot[] = [
   {
     id: 'oled',
     label: 'OLED',
-    shortTitle: '128×64 Monochrome OLED Display',
-    description: 'Displays the prototype model output.',
+    shortTitle: '0.96" I2C Monochrome OLED Display',
+    description: 'Displays real-time GenoSense system status and calculated risk profile output.',
     details:
-      'Communicates over I2C (0x3C) to show live processing steps and the final calculated prototype marker-match score.',
-    position: [-0.45, 0.22, 0.92],
+      'Communicates over I2C (0x3C) with the Raspberry Pi 4 edge compute module. Shows deterministic variant match scores and live pipeline telemetry.',
+    anchor: [-0.005, 0.22, 0.505],
+    position: [0.0, 0.56, 0.42],
   },
   {
     id: 'button',
     label: 'ANALYZE BUTTON',
-    shortTitle: 'Physical Tactile Analyze Switch',
-    description: 'Starts the analysis workflow.',
+    shortTitle: 'Tactile Physical Analyze Switch',
+    description: 'Triggers the on-device genomic variant matching engine.',
     details:
-      'Wired to GPIO Pin 17 in the planned hardware build, allowing one-touch execution of the variant matching pipeline.',
-    position: [0.68, 0.08, 0.92],
-  },
-  {
-    id: 'rpi',
-    label: 'RASPBERRY PI',
-    shortTitle: 'Internal Single-Board Computer',
-    description: 'Acts as the edge-side client in the planned hardware implementation.',
-    details:
-      'Mounted inside the matte protective enclosure; handles local I/O, button interrupts, and API synchronization.',
-    position: [0.0, -0.15, 0.0],
+      'Hardware tactile push switch with chrome bezel and purple actuator, wired to GPIO Pin 17 for instant single-touch pipeline execution.',
+    anchor: [-0.178, -0.134, 0.774],
+    position: [-0.54, -0.32, 0.85],
   },
   {
     id: 'led',
     label: 'STATUS LIGHT',
-    shortTitle: 'Multi-State Status LED',
-    description: 'Indicates system readiness and active analysis.',
+    shortTitle: '3-State System Status Indicators',
+    description: 'Triple indicator LEDs indicating Ready, Processing, and Error states.',
     details:
-      'Pulses amber during variant matching and illuminates steady teal when the result is synchronized.',
-    position: [0.68, 0.42, 0.92],
+      'Green LED indicates system readiness, middle LED pulses during active variant matching, and red LED flags errors.',
+    anchor: [0.26, -0.134, 0.774],
+    position: [0.54, -0.32, 0.85],
+  },
+  {
+    id: 'rpi',
+    label: 'RASPBERRY PI',
+    shortTitle: 'Raspberry Pi 4 Edge Compute Module',
+    description: 'Acts as the edge-side compute client inside the protective enclosure.',
+    details:
+      'Internal 4GB quad-core SBC that handles local I/O interrupts, executes deterministic variant matching, and drives the I2C OLED display.',
+    anchor: [0.046, -0.318, -0.147],
+    position: [-0.74, 0.22, 0.2],
   },
   {
     id: 'connectivity',
     label: 'CONNECTIVITY',
-    shortTitle: 'Wi-Fi & USB-C Telemetry Interface',
-    description: 'Synchronizes the edge device with the web interface.',
+    shortTitle: 'Telemetry & Power Interface',
+    description: 'Synchronizes edge analysis state with the web dashboard.',
     details:
-      'Ensures that both the physical OLED display and the web application reflect the exact same analysis output.',
-    position: [-0.95, -0.1, -0.6],
+      'Includes 5V 3A DC buck power regulation, Wi-Fi telemetry sync, and external I/O ports along the matte black side panel.',
+    anchor: [0.58, -0.18, 0.0],
+    position: [0.86, -0.1, 0.0],
   },
 ];
 
@@ -64,7 +69,7 @@ export function getOledScreenContent(
       return {
         line1: 'GENOSENSE',
         line2: 'READY',
-        line3: 'WAITING FOR INPUT',
+        line3: 'PRESS TO ANALYZE',
         isBusy: false,
       };
     case 'ANALYZING...':

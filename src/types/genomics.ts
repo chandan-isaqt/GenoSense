@@ -116,4 +116,5 @@ export interface DeviceHotspot {
   description: string;
   details: string;
   position: [number, number, number];
+  anchor?: [number, number, number];
 }

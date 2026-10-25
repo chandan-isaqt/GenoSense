@@ -1,6 +1,6 @@
-import React, { Suspense, useEffect, useRef, useState } from 'react';
+import React, { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, RoundedBox, Html, ContactShadows } from '@react-three/drei';
+import { OrbitControls, Html, ContactShadows, useFBX, Line } from '@react-three/drei';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import * as THREE from 'three';
 import {
@@ -25,7 +25,90 @@ interface DeviceMeshProps {
   isAnalyzing: boolean;
 }
 
-const GenoSenseHardwareMesh: React.FC<DeviceMeshProps> = ({
+const DEFAULT_CAMERA_POS: [number, number, number] = [1.8, 1.1, 3.1];
+
+const HotspotConnectorLine: React.FC<{
+  anchor: [number, number, number];
+  target: [number, number, number];
+  isSelected: boolean;
+}> = ({ anchor, target, isSelected }) => {
+  return (
+    <Line
+      points={[anchor, target]}
+      color={isSelected ? '#35D6C7' : '#225B66'}
+      transparent
+      opacity={isSelected ? 0.95 : 0.45}
+      lineWidth={1.2}
+    />
+  );
+};
+
+function drawOledToCanvas(
+  canvas: HTMLCanvasElement,
+  lines: { line1: string; line2: string; line3: string; isBusy: boolean }
+) {
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  canvas.width = 512;
+  canvas.height = 256;
+
+  // Screen background
+  ctx.fillStyle = '#02070E';
+  ctx.fillRect(0, 0, 512, 256);
+
+  // Outer glowing cyan border
+  ctx.strokeStyle = '#35D6C7';
+  ctx.lineWidth = 6;
+  ctx.strokeRect(6, 6, 500, 244);
+
+  // Top header rule
+  ctx.strokeStyle = '#182532';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(16, 52);
+  ctx.lineTo(496, 52);
+  ctx.stroke();
+
+  // Header Title & Wi-Fi indicator
+  ctx.fillStyle = '#35D6C7';
+  ctx.font = 'bold 22px monospace';
+  ctx.textAlign = 'left';
+  ctx.fillText('◈ GENOSENSE', 24, 38);
+
+  ctx.font = 'bold 16px monospace';
+  ctx.textAlign = 'right';
+  ctx.fillText('● Wi-Fi', 488, 38);
+
+  // Main Status Text
+  ctx.textAlign = 'center';
+  ctx.font = lines.line2.includes('%') ? 'bold 52px monospace' : 'bold 44px monospace';
+  ctx.fillStyle = lines.line2.includes('%') ? '#F4F7FA' : '#35D6C7';
+  ctx.fillText(lines.line2, 256, 126);
+
+  // Subtitle
+  ctx.font = 'bold 20px monospace';
+  ctx.fillStyle = '#35D6C7';
+  ctx.fillText(lines.line3, 256, 168);
+
+  // Bottom footer rule
+  ctx.beginPath();
+  ctx.moveTo(16, 204);
+  ctx.lineTo(496, 204);
+  ctx.stroke();
+
+  // Footer Metadata
+  ctx.textAlign = 'left';
+  ctx.font = '16px monospace';
+  ctx.fillStyle = '#8B9AAA';
+  ctx.fillText('SSD1306 (I2C 0x3C)', 24, 234);
+
+  ctx.textAlign = 'right';
+  ctx.fillStyle = lines.isBusy ? '#F5B942' : '#35D6C7';
+  ctx.fillText(lines.isBusy ? '● PROCESSING' : '● READY', 488, 234);
+}
+
+const GenoSenseFbxModel: React.FC<DeviceMeshProps> = ({
   activeHotspot,
   onSelectHotspot,
   showCutaway,
@@ -33,204 +116,300 @@ const GenoSenseHardwareMesh: React.FC<DeviceMeshProps> = ({
   onPressAnalyze,
   isAnalyzing,
 }) => {
+  const fbx = useFBX('/models/Genosense.fbx');
   const groupRef = useRef<THREE.Group>(null);
-  const buttonRef = useRef<THREE.Mesh>(null);
+  const buttonMeshRef = useRef<THREE.Mesh | null>(null);
 
+  // Dynamic Canvas Texture for Native WebGL OLED Display
+  const oledTexture = useMemo(() => {
+    const canvas = document.createElement('canvas');
+    drawOledToCanvas(canvas, oledLines);
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.wrapS = THREE.ClampToEdgeWrapping;
+    tex.wrapT = THREE.ClampToEdgeWrapping;
+    return tex;
+  }, []);
+
+  useEffect(() => {
+    if (oledTexture.image) {
+      drawOledToCanvas(oledTexture.image as HTMLCanvasElement, oledLines);
+      oledTexture.needsUpdate = true;
+    }
+  }, [oledLines, oledTexture]);
+
+  // Clone FBX, normalize UVs on screen mesh, and center strictly at origin
+  const { fbxGroup, scale } = useMemo(() => {
+    const cloned = fbx.clone(true);
+
+    // Reset default FBX root transforms
+    cloned.position.set(0, 0, 0);
+    cloned.rotation.set(0, 0, 0);
+    cloned.scale.set(1, 1, 1);
+    cloned.updateMatrixWorld(true);
+
+    // Normalize UV coordinates on the screen mesh so texture maps 1:1 without distortion
+    const screenMesh = cloned.getObjectByName('screen') as THREE.Mesh | undefined;
+    if (screenMesh && screenMesh.geometry) {
+      screenMesh.geometry = screenMesh.geometry.clone();
+      const uvAttr = screenMesh.geometry.attributes.uv;
+      if (uvAttr) {
+        let minU = Infinity,
+          maxU = -Infinity,
+          minV = Infinity,
+          maxV = -Infinity;
+        for (let i = 0; i < uvAttr.count; i++) {
+          minU = Math.min(minU, uvAttr.getX(i));
+          maxU = Math.max(maxU, uvAttr.getX(i));
+          minV = Math.min(minV, uvAttr.getY(i));
+          maxV = Math.max(maxV, uvAttr.getY(i));
+        }
+        const uSpan = maxU - minU || 1;
+        const vSpan = maxV - minV || 1;
+        for (let i = 0; i < uvAttr.count; i++) {
+          uvAttr.setXY(
+            i,
+            (uvAttr.getX(i) - minU) / uSpan,
+            (uvAttr.getY(i) - minV) / vSpan
+          );
+        }
+        uvAttr.needsUpdate = true;
+      }
+    }
+
+    // Compute raw untransformed bounding box
+    const box = new THREE.Box3().setFromObject(cloned);
+    const c = new THREE.Vector3();
+    box.getCenter(c);
+    const s = new THREE.Vector3();
+    box.getSize(s);
+    const maxDim = Math.max(s.x, s.y, s.z);
+    const scaleFactor = 1.7 / maxDim; // Normalized to 1.7 units with generous framing
+
+    // Offset position by negative center so model is strictly centered at (0, 0, 0)
+    cloned.position.set(-c.x, -c.y, -c.z);
+
+    return { fbxGroup: cloned, scale: scaleFactor };
+  }, [fbx]);
+
+  // Configure materials matching the true GenoSense hardware specs
+  useEffect(() => {
+    fbxGroup.traverse((child) => {
+      if ((child as THREE.Mesh).isMesh) {
+        const mesh = child as THREE.Mesh;
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+
+        if (mesh.name === 'body') {
+          // Vibrant turquoise/teal enclosure
+          mesh.material = new THREE.MeshStandardMaterial({
+            color: '#14B8A6',
+            roughness: 0.38,
+            metalness: 0.22,
+            transparent: showCutaway,
+            opacity: showCutaway ? 0.22 : 1.0,
+            depthWrite: !showCutaway,
+          });
+        } else if (mesh.name === 'pasted__pCube1') {
+          // Front angled face plate (brushed natural aluminum)
+          mesh.material = new THREE.MeshStandardMaterial({
+            color: '#CBD5E1',
+            roughness: 0.28,
+            metalness: 0.72,
+            transparent: showCutaway,
+            opacity: showCutaway ? 0.32 : 1.0,
+            depthWrite: !showCutaway,
+          });
+        } else if (mesh.name === 'screen') {
+          // Live OLED Display rendered directly via dynamic CanvasTexture
+          mesh.material = new THREE.MeshBasicMaterial({
+            map: oledTexture,
+          });
+        } else if (mesh.name === 'button') {
+          // Tactile Purple Analyze Button
+          buttonMeshRef.current = mesh;
+          mesh.material = new THREE.MeshStandardMaterial({
+            color: '#8B5CF6',
+            emissive: '#7C3AED',
+            emissiveIntensity: isAnalyzing ? 1.0 : 0.45,
+            metalness: 0.15,
+            roughness: 0.35,
+          });
+        } else if (mesh.name === 'ready') {
+          // Top Status LED (Emerald Green "Ready")
+          mesh.material = new THREE.MeshStandardMaterial({
+            color: '#10B981',
+            emissive: '#10B981',
+            emissiveIntensity: 1.0,
+            roughness: 0.2,
+          });
+        } else if (mesh.name === 'prossesing') {
+          // Middle Status LED (Blue / Amber "Processing")
+          mesh.material = new THREE.MeshStandardMaterial({
+            color: isAnalyzing ? '#F59E0B' : '#3B82F6',
+            emissive: isAnalyzing ? '#F59E0B' : '#3B82F6',
+            emissiveIntensity: isAnalyzing ? 1.0 : 0.65,
+            roughness: 0.2,
+          });
+        } else if (mesh.name === 'error') {
+          // Bottom Status LED (Red "Error")
+          mesh.material = new THREE.MeshStandardMaterial({
+            color: '#EF4444',
+            emissive: '#DC2626',
+            emissiveIntensity: 0.45,
+            roughness: 0.2,
+          });
+        } else if (mesh.name === 'RaspberryPi_') {
+          // Internal Raspberry Pi 4 Model B
+          if (Array.isArray(mesh.material)) {
+            mesh.material = mesh.material.map((mat) => {
+              if (mat.name.includes('circuit')) {
+                return new THREE.MeshStandardMaterial({
+                  color: '#15803D',
+                  roughness: 0.42,
+                  metalness: 0.25,
+                });
+              }
+              if (mat.name.includes('gold')) {
+                return new THREE.MeshStandardMaterial({
+                  color: '#F59E0B',
+                  roughness: 0.2,
+                  metalness: 0.9,
+                });
+              }
+              if (mat.name.includes('metal') || mat.name.includes('Metallic')) {
+                return new THREE.MeshStandardMaterial({
+                  color: '#CBD5E1',
+                  roughness: 0.25,
+                  metalness: 0.85,
+                });
+              }
+              if (mat.name.includes('Plastic') || mat.name.includes('black')) {
+                return new THREE.MeshStandardMaterial({
+                  color: '#111827',
+                  roughness: 0.6,
+                  metalness: 0.2,
+                });
+              }
+              return mat;
+            });
+          }
+        } else if (mesh.name.startsWith('empty_')) {
+          // Matte black side panel & ventilation grille
+          mesh.material = new THREE.MeshStandardMaterial({
+            color: '#18202A',
+            roughness: 0.45,
+            metalness: 0.35,
+          });
+        }
+      }
+    });
+  }, [fbxGroup, showCutaway, isAnalyzing]);
+
+  // Gentle breathing floating motion and tactile button press animation
   useFrame((state) => {
     if (groupRef.current) {
-      groupRef.current.position.y = Math.sin(state.clock.elapsedTime * 1.4) * 0.035;
+      groupRef.current.position.y = Math.sin(state.clock.elapsedTime * 1.2) * 0.025;
     }
-    if (buttonRef.current) {
-      const targetZ = isAnalyzing ? 0.88 : 0.92;
-      buttonRef.current.position.z = THREE.MathUtils.lerp(
-        buttonRef.current.position.z,
+    if (buttonMeshRef.current) {
+      const targetZ = isAnalyzing ? 8.18 : 8.32;
+      buttonMeshRef.current.position.z = THREE.MathUtils.lerp(
+        buttonMeshRef.current.position.z,
         targetZ,
-        0.15
+        0.18
       );
     }
   });
 
   return (
-    <group ref={groupRef} rotation={[0.12, -0.32, 0]}>
-      {/* Main Matte Dark Enclosure Body */}
-      <RoundedBox
-        args={[2.5, 1.25, 1.75]}
-        radius={0.12}
-        smoothness={4}
-        castShadow
-        receiveShadow
-      >
-        <meshStandardMaterial
-          color="#0B1826"
-          roughness={0.38}
-          metalness={0.45}
-          transparent={showCutaway}
-          opacity={showCutaway ? 0.32 : 1}
-        />
-      </RoundedBox>
-
-      {/* Top Anodized Bevel Plate */}
-      <RoundedBox
-        args={[2.38, 0.08, 1.62]}
-        radius={0.04}
-        position={[0, 0.63, 0]}
-      >
-        <meshStandardMaterial
-          color="#12263A"
-          roughness={0.3}
-          metalness={0.6}
-          transparent={showCutaway}
-          opacity={showCutaway ? 0.25 : 1}
-        />
-      </RoundedBox>
-
-      {/* Cyan Accent Rim Strip */}
-      <mesh position={[0, 0.58, 0.88]}>
-        <boxGeometry args={[2.2, 0.018, 0.02]} />
-        <meshBasicMaterial color="#43E6D1" />
-      </mesh>
-
-      {/* Internal Raspberry Pi 4 Board (Visible clearly in cutaway mode) */}
-      <group position={[0, -0.22, 0]}>
-        {/* Green PCB */}
-        <mesh>
-          <boxGeometry args={[1.75, 0.06, 1.15]} />
-          <meshStandardMaterial color="#115E3B" roughness={0.5} metalness={0.3} />
-        </mesh>
-        {/* ARM CPU Heat Spreader */}
-        <mesh position={[-0.2, 0.05, 0]}>
-          <boxGeometry args={[0.38, 0.05, 0.38]} />
-          <meshStandardMaterial color="#94A3B8" roughness={0.2} metalness={0.85} />
-        </mesh>
-        {/* 40-Pin GPIO Header */}
-        <mesh position={[0.1, 0.07, -0.45]}>
-          <boxGeometry args={[1.1, 0.08, 0.1]} />
-          <meshStandardMaterial color="#1E293B" roughness={0.6} />
-        </mesh>
-        {/* Wi-Fi Shield */}
-        <mesh position={[-0.62, 0.05, -0.3]}>
-          <boxGeometry args={[0.28, 0.04, 0.24]} />
-          <meshStandardMaterial color="#CBD5E1" metalness={0.9} roughness={0.15} />
-        </mesh>
-        {/* Ethernet / USB Ports on side */}
-        <mesh position={[0.78, 0.12, 0.25]}>
-          <boxGeometry args={[0.26, 0.22, 0.32]} />
-          <meshStandardMaterial color="#94A3B8" metalness={0.8} roughness={0.25} />
-        </mesh>
+    <group ref={groupRef}>
+      {/* Centered & Normalized Genosense.fbx Model */}
+      <group scale={scale}>
+        <primitive object={fbxGroup} />
       </group>
 
-      {/* Front Recessed Bezel for OLED Screen */}
-      <RoundedBox
-        args={[1.18, 0.62, 0.06]}
-        radius={0.04}
-        position={[-0.42, 0.12, 0.87]}
-      >
-        <meshStandardMaterial color="#030810" roughness={0.15} metalness={0.2} />
-      </RoundedBox>
-
-      {/* Live Physical OLED Screen Overlay in 3D Space */}
-      <Html
-        transform
-        occlude="blending"
-        position={[-0.42, 0.12, 0.905]}
-        scale={0.16}
-      >
-        <div
-          onClick={() => {
-            const oledSpot = DEVICE_HOTSPOTS.find((h) => h.id === 'oled');
-            if (oledSpot) onSelectHotspot(oledSpot);
-          }}
-          className="w-[240px] h-[122px] rounded-md bg-[#030810] border-2 border-[#43E6D1]/50 px-3 py-2 flex flex-col justify-between font-mono select-none cursor-pointer shadow-[0_0_20px_rgba(67,230,209,0.25)]"
-        >
-          <div className="flex items-center justify-between text-[10px] text-[#43E6D1]/80 border-b border-[#162C42] pb-1">
-            <span>{oledLines.line1}</span>
-            <span>SSD1306</span>
-          </div>
-          <div className="text-center my-auto">
-            <div
-              className={`font-display font-bold tracking-wider ${
-                oledLines.line2.includes('%')
-                  ? 'text-2xl text-[#F5FAFC]'
-                  : 'text-sm text-[#43E6D1]'
-              } ${oledLines.isBusy ? 'animate-pulse' : ''}`}
-            >
-              {oledLines.line2}
-            </div>
-            <div className="text-[11px] font-bold text-[#43E6D1] tracking-widest uppercase mt-0.5">
-              {oledLines.line3}
-            </div>
-          </div>
-          <div className="flex items-center justify-between text-[8px] text-[#8EA2B3]">
-            <span>I2C 0x3C</span>
-            <span>{oledLines.isBusy ? 'BUSY' : 'SYNCED'}</span>
-          </div>
-        </div>
-      </Html>
-
-      {/* Tactile ANALYZE Button Housing */}
+      {/* Interactive Hit Area over the Screen for Hotspot Selection */}
       <mesh
-        position={[0.68, 0.05, 0.88]}
-        rotation={[Math.PI / 2, 0, 0]}
+        position={[-0.005, 0.222, 0.51]}
+        rotation={[-0.526, 0, 0]}
+        onClick={(e) => {
+          e.stopPropagation();
+          const oledSpot = DEVICE_HOTSPOTS.find((h) => h.id === 'oled');
+          if (oledSpot) onSelectHotspot(oledSpot);
+        }}
       >
-        <cylinderGeometry args={[0.24, 0.26, 0.06, 32]} />
-        <meshStandardMaterial color="#162F44" metalness={0.7} roughness={0.25} />
+        <planeGeometry args={[0.75, 0.44]} />
+        <meshBasicMaterial transparent opacity={0} />
       </mesh>
 
-      {/* Glowing Cyan LED Ring around Analyze Button */}
-      <mesh position={[0.68, 0.05, 0.905]}>
-        <ringGeometry args={[0.18, 0.22, 32]} />
-        <meshBasicMaterial color="#43E6D1" side={THREE.DoubleSide} />
-      </mesh>
-
-      {/* Tactile Push Cap */}
+      {/* Clickable 3D Tactile Trigger Area over the Physical Purple Analyze Button */}
       <mesh
-        ref={buttonRef}
-        position={[0.68, 0.05, 0.92]}
-        rotation={[Math.PI / 2, 0, 0]}
+        position={[-0.178, -0.134, 0.774]}
+        rotation={[-0.526, 0, 0]}
         onClick={(e) => {
           e.stopPropagation();
           onPressAnalyze();
         }}
       >
-        <cylinderGeometry args={[0.16, 0.16, 0.08, 32]} />
-        <meshStandardMaterial
-          color={isAnalyzing ? '#43E6D1' : '#1E3A52'}
-          metalness={0.5}
-          roughness={0.3}
-        />
+        <cylinderGeometry args={[0.07, 0.07, 0.04, 32]} />
+        <meshBasicMaterial transparent opacity={0} />
       </mesh>
 
-      {/* Status LED Indicator */}
-      <mesh position={[0.68, 0.42, 0.88]}>
-        <sphereGeometry args={[0.045, 16, 16]} />
-        <meshBasicMaterial color={isAnalyzing ? '#FFB84D' : '#43E6D1'} />
-      </mesh>
-
-      {/* Interactive 3D Hotspot Markers */}
+      {/* Interactive 3D Hotspots with Non-overlapping Anchors & Subtle Leader Lines */}
       {DEVICE_HOTSPOTS.map((spot) => {
         const isSelected = activeHotspot?.id === spot.id;
+        const anchor = spot.anchor || spot.position;
+
         return (
-          <Html key={spot.id} position={spot.position} center>
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onSelectHotspot(spot);
-              }}
-              aria-label={`Inspect ${spot.label} hotspot`}
-              className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider transition-all flex items-center gap-1 cursor-pointer border shadow-md whitespace-nowrap ${
-                isSelected
-                  ? 'bg-[#43E6D1] text-[#06111D] border-[#F5FAFC] scale-110'
-                  : 'bg-[#06111D]/90 text-[#43E6D1] border-[#43E6D1]/60 hover:bg-[#102434]'
-              }`}
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-current animate-ping" />
-              <span>{spot.label}</span>
-            </button>
-          </Html>
+          <group key={spot.id}>
+            {/* Surface Anchor Dot on the Physical Component */}
+            <mesh position={anchor}>
+              <sphereGeometry args={[0.012, 16, 16]} />
+              <meshBasicMaterial
+                color={isSelected ? '#35D6C7' : '#2DD4BF'}
+              />
+            </mesh>
+
+            {/* Subtle Connector Leader Line from Component to Label */}
+            <HotspotConnectorLine
+              anchor={anchor}
+              target={spot.position}
+              isSelected={isSelected}
+            />
+
+            {/* Projected HTML Label Badge */}
+            <Html position={spot.position} center>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onSelectHotspot(spot);
+                }}
+                aria-label={`Inspect ${spot.label} hotspot`}
+                className={`px-2.5 py-1 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer border shadow-lg whitespace-nowrap ${
+                  isSelected
+                    ? 'bg-[#35D6C7] text-[#05080D] border-[#F4F7FA] scale-105 shadow-[0_0_15px_rgba(53,214,199,0.5)]'
+                    : 'bg-[#080D14]/90 text-[#35D6C7] border-[#35D6C7]/50 hover:bg-[#0E1A26] hover:border-[#35D6C7]'
+                }`}
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-current animate-ping" />
+                <span>{spot.label}</span>
+              </button>
+            </Html>
+          </group>
         );
       })}
     </group>
+  );
+};
+
+const ModelLoadingFallback: React.FC = () => {
+  return (
+    <Html center>
+      <div className="flex flex-col items-center gap-2 font-mono text-xs text-[#35D6C7] bg-[#080D14]/95 p-4 rounded-xl border border-[#182532] shadow-2xl">
+        <Loader2 className="w-5 h-5 animate-spin" />
+        <span>LOADING GENOSENSE 3D MODEL...</span>
+      </div>
+    </Html>
   );
 };
 
@@ -271,6 +450,10 @@ export const GenoSense3DDevice: React.FC<GenoSense3DDeviceProps> = ({
   const handleResetCamera = () => {
     if (controlsRef.current) {
       controlsRef.current.reset();
+      const camera = controlsRef.current.object as THREE.PerspectiveCamera;
+      camera.position.set(...DEFAULT_CAMERA_POS);
+      controlsRef.current.target.set(0, 0, 0);
+      controlsRef.current.update();
     }
   };
 
@@ -279,6 +462,14 @@ export const GenoSense3DDevice: React.FC<GenoSense3DDeviceProps> = ({
       const camera = controlsRef.current.object as THREE.PerspectiveCamera;
       camera.position.multiplyScalar(factor);
       controlsRef.current.update();
+    }
+  };
+
+  const handleHotspotSelect = (spot: DeviceHotspot) => {
+    setActiveHotspot(spot);
+    // If user clicks Raspberry Pi hotspot, automatically enable cutaway view to show the internal SBC
+    if (spot.id === 'rpi') {
+      setShowCutaway(true);
     }
   };
 
@@ -296,11 +487,11 @@ export const GenoSense3DDevice: React.FC<GenoSense3DDeviceProps> = ({
         {/* Top Hardware Bar */}
         <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 bg-[#06111D]/90 border-b border-[#1B3852] text-xs font-mono">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#43E6D1] animate-pulse" />
-            <span className="text-[#F5FAFC] font-bold">
+            <span className="w-2 h-2 rounded-full bg-[#35D6C7] animate-pulse" />
+            <span className="text-[#F4F7FA] font-bold tracking-wider">
               GENOSENSE 3D PROTOTYPE
             </span>
-            <span className="text-[10px] px-2 py-0.5 rounded bg-[#102434] text-[#43E6D1] border border-[#1B3852]">
+            <span className="text-[10px] px-2 py-0.5 rounded bg-[#102434] text-[#35D6C7] border border-[#1B3852]">
               {showCutaway ? 'INTERNAL CUTAWAY' : 'ENCLOSURE VIEW'}
             </span>
           </div>
@@ -312,8 +503,8 @@ export const GenoSense3DDevice: React.FC<GenoSense3DDeviceProps> = ({
               onClick={() => setShowCutaway((prev) => !prev)}
               className={`px-2.5 py-1 rounded text-[11px] font-mono flex items-center gap-1 border transition-colors cursor-pointer ${
                 showCutaway
-                  ? 'bg-[#43E6D1] text-[#06111D] border-[#43E6D1] font-bold'
-                  : 'bg-[#102434] text-[#8EA2B3] hover:text-[#F5FAFC] border-[#1B3852]'
+                  ? 'bg-[#35D6C7] text-[#05080D] border-[#35D6C7] font-bold'
+                  : 'bg-[#102434] text-[#8B9AAA] hover:text-[#F4F7FA] border-[#1B3852]'
               }`}
               title="Toggle Internal Cutaway (See Raspberry Pi Inside)"
             >
@@ -324,7 +515,7 @@ export const GenoSense3DDevice: React.FC<GenoSense3DDeviceProps> = ({
             <button
               type="button"
               onClick={() => handleZoom(0.85)}
-              className="p-1.5 rounded bg-[#102434] text-[#8EA2B3] hover:text-[#F5FAFC] border border-[#1B3852] cursor-pointer"
+              className="p-1.5 rounded bg-[#102434] text-[#8B9AAA] hover:text-[#F4F7FA] border border-[#1B3852] cursor-pointer"
               aria-label="Zoom in 3D model"
               title="Zoom In"
             >
@@ -333,7 +524,7 @@ export const GenoSense3DDevice: React.FC<GenoSense3DDeviceProps> = ({
             <button
               type="button"
               onClick={() => handleZoom(1.15)}
-              className="p-1.5 rounded bg-[#102434] text-[#8EA2B3] hover:text-[#F5FAFC] border border-[#1B3852] cursor-pointer"
+              className="p-1.5 rounded bg-[#102434] text-[#8B9AAA] hover:text-[#F4F7FA] border border-[#1B3852] cursor-pointer"
               aria-label="Zoom out 3D model"
               title="Zoom Out"
             >
@@ -342,7 +533,7 @@ export const GenoSense3DDevice: React.FC<GenoSense3DDeviceProps> = ({
             <button
               type="button"
               onClick={handleResetCamera}
-              className="p-1.5 rounded bg-[#102434] text-[#8EA2B3] hover:text-[#F5FAFC] border border-[#1B3852] cursor-pointer"
+              className="p-1.5 rounded bg-[#102434] text-[#8B9AAA] hover:text-[#F4F7FA] border border-[#1B3852] cursor-pointer"
               aria-label="Reset 3D camera"
               title="Reset Camera"
             >
@@ -352,45 +543,58 @@ export const GenoSense3DDevice: React.FC<GenoSense3DDeviceProps> = ({
         </div>
 
         {/* 3D Canvas or Graceful Fallback */}
-        <div className={compact ? 'h-[340px] sm:h-[380px]' : 'h-[380px] sm:h-[440px]'}>
+        <div className={compact ? 'h-[340px] sm:h-[380px]' : 'h-[390px] sm:h-[450px]'}>
           {webglSupported ? (
             <Canvas
               shadows
-              camera={{ position: [0, 0.65, 3.3], fov: 42 }}
+              camera={{ position: DEFAULT_CAMERA_POS, fov: 36 }}
               gl={{ antialias: true, alpha: true }}
             >
-              <ambientLight intensity={0.85} />
+              {/* Studio Key Light, Fill Light, and Rim Lights */}
+              <ambientLight intensity={1.2} color="#E2E8F0" />
               <directionalLight
-                position={[4, 6, 4]}
-                intensity={1.5}
+                position={[4, 6, 5]}
+                intensity={1.8}
                 castShadow
+                shadow-mapSize-width={1024}
+                shadow-mapSize-height={1024}
               />
-              <pointLight position={[-3, 2, 2]} intensity={0.7} color="#43E6D1" />
-              <pointLight position={[2, -2, 2]} intensity={0.5} color="#5CA8FF" />
+              <directionalLight
+                position={[-4, 3, 2]}
+                intensity={1.0}
+                color="#35D6C7"
+              />
+              <directionalLight
+                position={[0, 4, -5]}
+                intensity={1.2}
+                color="#4DA3FF"
+              />
+              <pointLight position={[0, -2, 2]} intensity={0.5} color="#35D6C7" />
 
-              <Suspense fallback={null}>
-                <GenoSenseHardwareMesh
+              <Suspense fallback={<ModelLoadingFallback />}>
+                <GenoSenseFbxModel
                   activeHotspot={activeHotspot}
-                  onSelectHotspot={setActiveHotspot}
+                  onSelectHotspot={handleHotspotSelect}
                   showCutaway={showCutaway}
                   oledLines={oledLines}
                   onPressAnalyze={triggerDeviceAnalyze}
                   isAnalyzing={isAnalyzing}
                 />
                 <ContactShadows
-                  position={[0, -0.82, 0]}
-                  opacity={0.45}
-                  scale={6}
-                  blur={2.2}
+                  position={[0, -0.72, 0]}
+                  opacity={0.55}
+                  scale={5.5}
+                  blur={2.0}
                 />
               </Suspense>
 
               <OrbitControls
                 ref={controlsRef}
+                target={[0, 0, 0]}
                 enablePan={false}
-                minDistance={2.1}
-                maxDistance={5.2}
-                maxPolarAngle={Math.PI / 1.75}
+                minDistance={2.4}
+                maxDistance={5.8}
+                maxPolarAngle={Math.PI / 1.7}
               />
             </Canvas>
           ) : (
@@ -401,7 +605,7 @@ export const GenoSense3DDevice: React.FC<GenoSense3DDeviceProps> = ({
                 alt="GenoSense Prototype Device"
                 className="h-48 rounded-xl object-cover border border-[#1B3852]"
               />
-              <div className="text-xs font-mono text-[#43E6D1]">
+              <div className="text-xs font-mono text-[#35D6C7]">
                 {oledLines.line1} • {oledLines.line2} • {oledLines.line3}
               </div>
             </div>
@@ -411,7 +615,7 @@ export const GenoSense3DDevice: React.FC<GenoSense3DDeviceProps> = ({
         {/* Bottom Interactive Bar Inside Device Frame */}
         <div className="px-4 py-3 bg-[#06111D]/90 border-t border-[#1B3852] flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-1.5">
-            <span className="text-[10px] font-mono uppercase text-[#8EA2B3] mr-1">
+            <span className="text-[10px] font-mono uppercase text-[#8B9AAA] mr-1">
               Hotspots:
             </span>
             {DEVICE_HOTSPOTS.map((spot) => {
@@ -420,11 +624,11 @@ export const GenoSense3DDevice: React.FC<GenoSense3DDeviceProps> = ({
                 <button
                   key={spot.id}
                   type="button"
-                  onClick={() => setActiveHotspot(spot)}
+                  onClick={() => handleHotspotSelect(spot)}
                   className={`px-2.5 py-1 rounded text-[11px] font-mono transition-colors cursor-pointer ${
                     isSelected
-                      ? 'bg-[#43E6D1] text-[#06111D] font-bold'
-                      : 'bg-[#102434] text-[#8EA2B3] hover:text-[#F5FAFC] border border-[#1B3852]'
+                      ? 'bg-[#35D6C7] text-[#05080D] font-bold'
+                      : 'bg-[#102434] text-[#8B9AAA] hover:text-[#F4F7FA] border border-[#1B3852]'
                   }`}
                 >
                   {spot.label}
@@ -437,7 +641,7 @@ export const GenoSense3DDevice: React.FC<GenoSense3DDeviceProps> = ({
             type="button"
             onClick={triggerDeviceAnalyze}
             disabled={isAnalyzing}
-            className="px-4 py-1.5 rounded-lg bg-[#43E6D1] hover:bg-[#62ebd9] text-[#06111D] font-display font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 cursor-pointer disabled:opacity-50 shadow-md"
+            className="px-4 py-1.5 rounded-lg bg-[#35D6C7] hover:bg-[#4ae0d2] text-[#05080D] font-display font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 cursor-pointer disabled:opacity-50 shadow-md transition-colors"
           >
             {isAnalyzing ? (
               <>
@@ -496,3 +700,8 @@ export const GenoSense3DDevice: React.FC<GenoSense3DDeviceProps> = ({
     </div>
   );
 };
+
+// Preload FBX model for instant rendering
+useFBX.preload('/models/Genosense.fbx');
+
+export default GenoSense3DDevice;
